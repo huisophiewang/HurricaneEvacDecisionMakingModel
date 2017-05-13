@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 import numpy as np
 from sklearn import linear_model
 
@@ -51,11 +52,13 @@ def final_model(x, y, lam, norm):
     #clf = svm.SVC(C=lam)
     clf.fit(x, y)
     print clf.coef_
-
+    
+    coefs = {}
     for i, c in enumerate(clf.coef_.T):
-        print '-------'
-        print header[i]
-        print c[0]
+        coefs[header[i]] = c[0]
+    res = sorted(coefs.items(), key=lambda x: abs(x[1]), reverse=True)
+    pprint(res)
+    
 
 
 
