@@ -68,7 +68,7 @@ def evac_rate_model_Xu(n, dist, beta, threshold):
         evac[c] += 1
     for c in evac:
         evac[c] /= float(len(cat))
-    #print evac
+    print evac
     
     if 4.0 in evac and 5.0 in evac:
         evac_cat3 = 1.0 - evac[4.0] - evac[5.0]
@@ -97,6 +97,7 @@ def model_Xu():
     ### Xu's model, 2011 landline:
     beta_2011mandatory = [1.1232, 0.8756, 0.0, 0.0, 0.0, 0.5023, 0.0, -0.2727, 0.0, 0.0]
     threshold_2011mandatory = [0.5926, 0.8231, 1.0530, 1.5108, 2.2109, 2.5860]
+    
     beta_2011voluntary = [0.6118, 0.5678, 0.0, 0.3109, 0.0, 0.4295, 0.0, 0.0, 0.0, 0.0]
     threshold_2011voluntary = [-0.2880, 0.0191, 0.4308, 1.0585, 1.7244, 2.0328]
     
@@ -155,8 +156,8 @@ def model_Wilmot():
     
         
 if __name__ == '__main__':
-    model_Xu()
-    #model_Wilmot()
+    #model_Xu()
+    model_Wilmot()
 
     
 

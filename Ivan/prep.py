@@ -85,25 +85,25 @@ def contingency_table():
 #     percent = table.apply(lambda r: r/r.sum(), axis=1)
 #     print pd.concat([table, percent], axis=1)
     
-#     counties = df.county.unique()
-#     for county in counties:
-#         print '=============================================================='
-#         print county
-#         df_select = df[(df.county==county)]
-#         table = pd.crosstab(df_select['race'],df_select['evac'], margins=True)
-#         table = table[['no, did not evacuate',  'yes, evacuated']]  # only keep column sum
-#         percent = table.apply(lambda r: r/r.sum(), axis=1)
-#         print pd.concat([table, percent], axis=1)
-        
-    states = df.state.unique()
-    for state in states:
+    counties = df.county.unique()
+    for county in counties:
         print '=============================================================='
-        print state
-        df_select = df[(df.state==state)]
+        print county
+        df_select = df[(df.county==county)]
         table = pd.crosstab(df_select['race'],df_select['evac'], margins=True)
         table = table[['no, did not evacuate',  'yes, evacuated']]  # only keep column sum
         percent = table.apply(lambda r: r/r.sum(), axis=1)
-        print pd.concat([table, percent], axis=1)       
+        print pd.concat([table, percent], axis=1)
+        
+#     states = df.state.unique()
+#     for state in states:
+#         print '=============================================================='
+#         print state
+#         df_select = df[(df.state==state)]
+#         table = pd.crosstab(df_select['race'],df_select['evac'], margins=True)
+#         table = table[['no, did not evacuate',  'yes, evacuated']]  # only keep column sum
+#         percent = table.apply(lambda r: r/r.sum(), axis=1)
+#         print pd.concat([table, percent], axis=1)       
     
         
     
@@ -111,8 +111,7 @@ if __name__ == '__main__':
     #select_cols()
     #convert()
     
-    all_corr()
-    
-    #contingency_table()
+    #all_corr()
+    contingency_table()
     
     

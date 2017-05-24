@@ -138,7 +138,7 @@ def calc_dist_model_Wilmot(all_tract):
                 
 if __name__ == '__main__':
     all_tract = pandas_read()
-    #calc_dist_model_Wilmot(all_tract)
-    calc_dist_model_Xu(all_tract)
+    calc_dist_model_Wilmot(all_tract)
+    #calc_dist_model_Xu(all_tract)
 
     
