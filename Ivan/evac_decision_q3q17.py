@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from pprint import pprint
+import os
 
 
 stay_map = {
@@ -132,25 +133,20 @@ def convert_multi_entry_dict(multi_entry):
             result[key] = v
     return result
 
-def plot():
-    df = pd.read_csv(r'IvanExport.csv')
-    #print df
-    df_select = df[(df.county=='AL')]
-    df_select.plot.bar()
-    plt.show()
+
     
 def filter_stay():
-    df = pd.read_csv(r'Ivan_evac_decision.csv')
+    df = pd.read_csv('data/Ivan_evac_decision.csv')
     df = df[(df.evac=='no, did not evacuate')]
     df = df[['index', 'no_01','no_02','no_03', 'no_other']]
     df['no_02'].replace(stay_map,inplace=True)
     df['no_03'].replace(stay_map,inplace=True)
     
-    #df['no_01'].plot.bar()
-    df.hist(column='no_01',bins=30)
+    df['no_01'].plot.bar()
+    #df.hist(column='no_01',bins=30)
     plt.show()
     #print len(df.no_01.unique())
-    df.to_csv('Ivan_evac_decision_no.csv', columns=['index', 'no_01','no_02','no_03', 'no_other'], index=False)
+    #df.to_csv('Ivan_evac_decision_no.csv', columns=['index', 'no_01','no_02','no_03', 'no_other'], index=False)
 
 
     
@@ -209,6 +205,7 @@ def merge():
 
 if __name__ == '__main__':
     #select_cols()
-    #filter_stay()
+    filter_stay()
     #filter_evac()
-    merge()
+    #merge()
+
