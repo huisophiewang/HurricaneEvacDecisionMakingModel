@@ -6,7 +6,8 @@ def convert():
     #print df.size
     
     #df = pd.read_csv(r'Lili_BN_labels.csv')
-    df = pd.read_csv(r'Lili_BN_labels.csv')
+    #df = pd.read_csv(r'Lili_BN_labels.csv')
+    df = pd.read_csv(r'data/Lili_BN_labels_with_dist.csv')
 #     cols = df.columns.tolist()
 #     cols = cols[-1:] + cols[:-1]
 #     print cols
@@ -14,10 +15,11 @@ def convert():
     df['Gender'] = df['Gender'] - 1
     # 0 Other, 1 Caucasian, 2 African American, 3 Native American, 4 Hispanic, 5 Asian (no Asians in this sample)
     df['Race'].replace({6:0, 7:0, 3:1, 1:2, 5:3, 4:4, 2:0}, inplace=True)
-    #print df['Race']
+    print df['Race'].unique()
     df_race = pd.get_dummies(df['Race'], drop_first=True)
     df_race.rename(columns={1.0:'r_white', 2.0:'r_black', 3.0:'r_native', 4.0:'r_hispanic'}, inplace=True)
     df_race = df_race.astype(float)
+    #print df_race
     # 0 Other, 1 Married, 2 Single
     df['Marriage'].replace({1:1, 2:2, 3:0, 4:0}, inplace=True)
     df_marriage = pd.get_dummies(df['Marriage'], drop_first=True)
@@ -47,11 +49,13 @@ def convert():
                    'Owner', 'h_singlefam', 'h_mobile', "CloseCoast", "CloseWater", "OfficialHurricWatch", "OfficialEvac", 
                    "SrcLocalAuth", "SrcLocalMedia", "SrcNationalMedia", "SrcInternet", "SrcPeers",
                    "SeeStormCond", "SeeShopClose", "SeePeerEvac", "PrevStormExp", "PrevFalseAlarm",
-                   "ProtectFromLooter", "ProtectFromStorm", "LostIncome", "EvacExpense", "Traffic", "Evac"]
+                   "ProtectFromLooter", "ProtectFromStorm", "LostIncome", "EvacExpense", "Traffic", "DistCoast","DistRiver","DistLake"
+                   "Evac"]
     
+
     #result.to_csv('Lili_converted_EvacDay.csv', columns=new_columns, index=False)
     #result.to_csv('Lili_converted_EvacTime.csv', columns=new_columns, index=False)
-    result.to_csv('Lili_converted_v2.csv', columns=new_columns, index=False)
+    #result.to_csv('data/Lili_converted_v3.csv', columns=new_columns, index=False)
 
             
 

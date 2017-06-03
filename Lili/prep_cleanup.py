@@ -30,76 +30,6 @@ def race_dist():
             
     pprint(all)
     
-def prep():
-    #df = pd.read_csv(r'LiliBasicData.csv')
-    
-    
-    df = np.genfromtxt(r'LiliBasicData_BN.csv', delimiter=",", dtype=float, names=True)
-    qlabels = df.dtype.names
-    labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
-              'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
-              'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
-              'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
-              'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
-              'Evac'
-              ]
-
-    c=0
-    out = []
-    for d in df:
-        #print len(d)
-#         if math.isnan(d[0]) and math.isnan(d[1]):
-#             continue
-        # remove subject that has missing value in any field
-        for j in d:
-            if math.isnan(j):
-                break
-        else:
-            age = d['q17']
-            if age < 30:
-                d['q17'] = '1'
-            elif age >= 30 and age < 40:
-                d['q17'] = '2'
-            elif age >= 40 and age < 50:
-                d['q17'] = '3'
-            elif age >= 50 and age < 60:
-                d['q17'] = '4'
-            elif age >= 60 and age < 70:
-                d['q17'] = '5'
-            else:
-                d['q17'] = '6'
-            out.append(d)
-            c+=1
-    print c
-    #print out.shape
-    #labels = ['']
-    #out = [(1,2),(3,4)]
-    #np.savetxt("foo.csv", out, delimiter=",", header='a,b')
-    np.savetxt("Lili_BN_labels.csv", out, fmt='%s', delimiter=",", header=','.join(labels))
-
-def prep_with_dist():
-    df = np.genfromtxt(r'LiliBasicData_BN_Dist.csv', delimiter=",", dtype=float, names=True)
-    #print df
-    qlabels = df.dtype.names
-    labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
-              'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
-              'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
-              'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
-              'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
-              'County','DistRiver','DistLake','DistCoast',
-              'Evac','EvacDay','EvacHour'
-              ]
-
-    out = []
-    for instance in df:
-        # remove subject that has missing value in any field
-        for j, value in enumerate(instance):
-            if j <= 33 and math.isnan(value):
-                break
-        else:
-            out.append(instance)
-    np.savetxt("Lili_Dist.csv", out, fmt='%s', delimiter=",", header=','.join(labels))
-    
 
     
 def get_var_cardinality():
@@ -174,7 +104,90 @@ def divide_by_evac():
     np.savetxt("Lili_BN_labels_Evac.csv", evacuated, fmt='%s', delimiter=",", header=','.join(labels))
         
 
+def prep():
+    #df = pd.read_csv(r'LiliBasicData.csv')
+    
+    
+    df = np.genfromtxt(r'data/LiliBasicData_BN.csv', delimiter=",", dtype=float, names=True)
+    qlabels = df.dtype.names
+    labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
+              'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
+              'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
+              'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
+              'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
+              'Evac'
+              ]
 
+    c=0
+    out = []
+    for d in df:
+        #print len(d)
+#         if math.isnan(d[0]) and math.isnan(d[1]):
+#             continue
+        # remove subject that has missing value in any field
+        for j in d:
+            print len(d)
+            if math.isnan(j):
+                break
+        else:
+            age = d['q17']
+            if age < 30:
+                d['q17'] = '1'
+            elif age >= 30 and age < 40:
+                d['q17'] = '2'
+            elif age >= 40 and age < 50:
+                d['q17'] = '3'
+            elif age >= 50 and age < 60:
+                d['q17'] = '4'
+            elif age >= 60 and age < 70:
+                d['q17'] = '5'
+            else:
+                d['q17'] = '6'
+            out.append(d)
+            c+=1
+    print c
+    #print out.shape
+    #labels = ['']
+    #out = [(1,2),(3,4)]
+    #np.savetxt("foo.csv", out, delimiter=",", header='a,b')
+    np.savetxt("data/Lili_BN_labels.csv", out, fmt='%s', delimiter=",", header=','.join(labels))
+
+def prep_with_dist():
+    df = np.genfromtxt(r'data/LiliBasicData_BN_Dist.csv', delimiter=",", dtype=float, names=True)
+    #print df
+    qlabels = df.dtype.names
+#     labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
+#               'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
+#               'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
+#               'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
+#               'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
+# #               'DistRiver','DistLake','DistCoast',
+#               'Evac'
+#               ]
+
+    labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
+              'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
+              'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
+              'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
+              'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
+              'Evac'
+              ]
+    out = []
+    c=0
+    for instance in df:
+        # remove subject that has missing value in any field
+        for j in instance:
+            print len(instance)
+            if math.isnan(j):
+                break
+#         for j, value in enumerate(instance):
+#             if j <= 33 and math.isnan(value):
+#                 break
+        else:
+            c+=1
+            out.append(instance)
+    print c
+    np.savetxt("data/Lili_BN_labels_with_dist.csv", out, fmt='%s', delimiter=",", header=','.join(labels))
     
     
 if __name__ == '__main__':
@@ -184,6 +197,7 @@ if __name__ == '__main__':
     #divide_by_income()
     #divide_by_age()
     prep_with_dist()
+    #prep()
     
         
         
