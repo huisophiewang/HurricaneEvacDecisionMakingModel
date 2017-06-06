@@ -14,7 +14,7 @@ rename_demographic = OrderedDict([('q99','age'), ('gender','gender'),('q1110','r
 rename_house = OrderedDict([('q94','house_type'), ('q95','house_material')])
 rename_loc = {'state':'state', 'samp':'county', 'city':'city', 'zip':'zip'}
 rename_official = {"q43":"heard_order", 'q44':'order_type'}
-rename_official_save = {"q43":"heard_order", 'q44':'order_type', 'q45':'door_to_door', 'q46':'order_first_src', 
+rename_official_all = {"q43":"heard_order", 'q44':'order_type', 'q45':'door_to_door', 'q46':'order_first_src', 
                    'q47':'early_enough', 'q48':'clear_enough', "q49":"responsible"}
 rename_info_src = OrderedDict([("q50a","src_local_radio"), ("q50b","src_local_tv"), 
             ("q50c","src_cable_cnn"), ("q50d","src_cable_weather_channel"), ("q50e","src_cable_other"),
@@ -28,6 +28,7 @@ rename_scenario = OrderedDict([('q65','sf_cat4_water'), ('q66','sf_cat4_wind_wat
                    ('q69','sf_cat2_water'), ('q70','sf_cat2_wind_water')])
 rename_evac = {'q2':'evac'}
 
+
 map_info_src = {'none':0, 'a little':1, 'a fair amount':2, 'a great deal':3}
 map_importance = {'not important':0, 'somewhat important':1, 'very important':2}
 
@@ -36,7 +37,7 @@ def one_var_plot():
     rename_all = {}
     rename_all.update(rename_demographic)
     rename_all.update(rename_house)
-    rename_all.update(rename_official)
+    rename_all.update(rename_official_all)
     df.rename(columns=rename_all, inplace=True)
     
 #     # numerical var, use histogram
@@ -45,7 +46,7 @@ def one_var_plot():
 #     plt.show()
     
     # categorical var, use bar plot
-    var = 'income'
+    var = 'responsible'
     print df[var].unique()
     df1 = df[var].value_counts(dropna=False)
     #df1 = df.groupby(var).size()
@@ -59,49 +60,90 @@ def one_var_plot():
 #     pylab.show()
     
     
+def two_var_bar_plot_special():
+    df = pd.read_csv(os.path.join('data', 'IvanExport.csv'))
+    
+    rename_all = {}
+    rename_all.update(rename_demographic)
+    rename_all.update(rename_loc)
+    rename_all.update(rename_official_all)
+    rename_all.update(rename_evac)
+    df.rename(columns=rename_all, inplace=True)
+
+
+    row_var  = 'county'
+    col_var = 'evac'
+#     col_val = 'heard_order'
+#     col_var = 'responsible'
+#     col_var = 'race'
+    
+    df = df[[row_var, col_var]]
+    county_sample_size = df[row_var].value_counts(dropna=False)
+    df.fillna(-1, inplace=True) #because groupby doesn't show NA
+    df1 = df.groupby([row_var, col_var]).size()
+    #print df1
+
+    counties = sorted(df[row_var].unique())
+    entities = sorted(df[col_var].unique())
+    #print counties
+    counties = ['monroe county', 
+                'bay county', 'escambia county', 'franklin county', 'gulf county',  'inland counties', 'okaloosa county',   'santa rosa county', 'walton county',
+                'baldwin county','mobile county',
+                'hancock county', 'harrison county','jackson county',
+                'orleans parish', 'jefferson parish', 'plaquemines parish','st. bernard parish', 'st. charles parish', 'st. john the baptist parish', 'st. tammany parish']
+
+    vals = np.zeros((len(counties), len(entities)))
+    for i, county in enumerate(counties):
+        for j, entity in enumerate(entities):
+            if entity in df1[county]:
+                vals[i][j] = df1[county][entity]
+
+
+    df2 = pd.DataFrame(vals, counties, entities)
+    df2.plot(kind='bar', rot=-90)
+    plt.show()
+
 def two_var_bar_plot():
     df = pd.read_csv(os.path.join('data', 'IvanExport.csv'))
     
     rename_all = {}
     rename_all.update(rename_demographic)
     rename_all.update(rename_loc)
-    rename_all.update(rename_official)
+    rename_all.update(rename_official_all)
     df.rename(columns=rename_all, inplace=True)
-
-
     row_var  = 'county'
     col_var = 'heard_order'
-
     df1 = df.groupby([row_var, col_var]).size()
-    #print df1
-    #print df1.shape
     rows = df1.index.get_level_values(row_var).unique().values
-    cols = df1.index.get_level_values(col_var).unique()
-#     
-#     print cols
-#     print df[col_var].unique()
-    
+    cols = df1.index.get_level_values(col_var).unique() 
     vals = df1.values.reshape(len(rows),len(cols))
+    print vals
+    print vals.shape
+    print type(vals)
     df2 = pd.DataFrame(vals, rows, cols)
     df2.plot(kind='bar', rot=-90)
     plt.show()
-
+    
 def corr():
-    df = pd.read_csv('Ivan_basic.csv')
+    #df = pd.read_csv('Ivan_basic.csv')
+    df = pd.read_csv('data/Ivan_common.csv')
     v1 = 'heard_order'
+    v1 = 'coast_dist'
+    v1 = 'pets'
+    
     v2 = 'evac'
     df1 = df[[v1, v2]]
     #print df1
     df1.fillna(0, inplace=True)
     #df1[v1].replace({0:0, 1:1,2:1,3:1,4:1,5:1,6:1,7:1},inplace=True)
-    print df1[v1].unique()
-    print df1.corr('pearson')
+    #print df1[v1].unique()
+    #print df1.corr('pearson')
     print pearsonr(df1[v1],df1[v2])
     
 ################################################
 # convert categorical var to dummy vars, fill in missing values
 def prep():
-    df = pd.read_csv(os.path.join('data', 'IvanExport.csv'))
+    df = pd.read_csv(os.path.join('data', 'IvanExport_dist.csv'))
     
     rename_all = OrderedDict()
     rename_all.update(rename_demographic)
@@ -214,6 +256,7 @@ def prep():
             'income','edu','owner','pets',
             'ht_single_fam', 'ht_mobile', 'ht_condo',
             'hm_wood', 'hm_brick', 'hm_cement',
+            'coast_dist',
             'heard_order', 
             'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
             'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
@@ -224,8 +267,7 @@ def prep():
     df1 = df[cols].dropna()
     print len(df1)
     
-    df1.to_csv('Ivan_basic.csv', columns=cols, index=False)
-    #df1.to_csv('Ivan_all_common.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common.csv', columns=cols, index=False)
     
 
 
@@ -234,8 +276,10 @@ if __name__ == '__main__':
     
 
     #one_var_plot()
+    #two_var_bar_plot()
+    two_var_bar_plot_special()
     #corr()
     #prep()
-    two_var_bar_plot()
+    
 
     

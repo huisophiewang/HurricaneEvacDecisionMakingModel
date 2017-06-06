@@ -2,9 +2,11 @@ import numpy as np
 from sklearn import linear_model
 from sklearn import svm
 from pprint import pprint
+from operator import itemgetter 
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     clf = linear_model.LogisticRegression(C=lam)
+    #clf = linear_model.LogisticRegression(C=lam, penalty='l1')
     #clf = svm.SVC(C=lam)
     
     clf.fit(x_train, y_train)
@@ -69,14 +71,26 @@ def cross_validate(x, y, fold):
 
 if __name__ == '__main__':
 
-    fp = 'Ivan_basic.csv'
+    fp = 'data/Ivan_common.csv'
     #fp = 'Ivan_all_common.csv'
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
+    
     fr.close()
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
-    x = data[:,:-1]
-    y = data[:,-1]
+#     x = data[:,:-1]
+#     y = data[:,-1]
+    #print header[3,4]
+    
+    y = data[:,21]
+    features = range(21) + range(22, 28)
+    print features
+    x = data[:, features]
+    header = itemgetter(*features)(header)
+    print header
+
+    #print range(28) - [23]
+    
     np.random.seed(0)
     indices = np.random.permutation(data.shape[0])
     split1 = int(data.shape[0]*0.8)
@@ -84,7 +98,7 @@ if __name__ == '__main__':
     train_idx, valid_idx, test_idx = indices[:split1], indices[split1:split2], indices[split2:]
     x_train, x_valid, x_test = x[train_idx], x[valid_idx], x[test_idx]
     y_train, y_valid, y_test = y[train_idx], y[valid_idx], y[test_idx]
-
+  
     lam = get_lambda(x_train, y_train, x_valid, y_valid)
     get_test_acc(x_train, y_train, x_test, y_test, lam, header)
     
