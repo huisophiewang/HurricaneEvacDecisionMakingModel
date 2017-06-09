@@ -13,7 +13,7 @@ rename_demographic = OrderedDict([('q99','age'), ('gender','gender'),('q1110','r
                       ('q105','owner'),('q106','pets'),('q112','income'),('q113','edu')])
 rename_house = OrderedDict([('q94','house_type'), ('q95','house_material')])
 rename_loc = {'state':'state', 'samp':'county', 'city':'city', 'zip':'zip'}
-rename_official = {"q43":"heard_order", 'q44':'order_type'}
+rename_official = {"q43":"heard_order", 'q44':'order_type', 'q49a':'know_evac_zone', 'q49b':'in_evac_zone'}
 rename_official_all = {"q43":"heard_order", 'q44':'order_type', 'q45':'door_to_door', 'q46':'order_first_src', 
                    'q47':'early_enough', 'q48':'clear_enough', "q49":"responsible"}
 rename_info_src = OrderedDict([("q50a","src_local_radio"), ("q50b","src_local_tv"), 
@@ -28,6 +28,8 @@ rename_scenario = OrderedDict([('q65','sf_cat4_water'), ('q66','sf_cat4_wind_wat
                    ('q69','sf_cat2_water'), ('q70','sf_cat2_wind_water')])
 rename_evac = {'q2':'evac'}
 
+########################################################################################
+# evac zone (q49a, q49b)
 
 map_info_src = {'none':0, 'a little':1, 'a fair amount':2, 'a great deal':3}
 map_importance = {'not important':0, 'somewhat important':1, 'very important':2}
@@ -61,7 +63,8 @@ def one_var_plot():
     
     
 def two_var_bar_plot_special():
-    df = pd.read_csv(os.path.join('data', 'IvanExport.csv'))
+    df = pd.read_csv(os.path.join('data', 'IvanExport_dist.csv'))
+    pprint(df.columns)
     
     rename_all = {}
     rename_all.update(rename_demographic)
@@ -72,17 +75,19 @@ def two_var_bar_plot_special():
 
 
     row_var  = 'county'
-    col_var = 'evac'
+    #col_var = 'race'
 #     col_val = 'heard_order'
-#     col_var = 'responsible'
+    col_var = 'responsible'
 #     col_var = 'race'
+    col_var = 'income'
+    df['income'].replace({'less than $15,000':'$15,000 and less', 'over $80,000':'$80,000 and more'}, inplace=True)
     
     df = df[[row_var, col_var]]
     county_sample_size = df[row_var].value_counts(dropna=False)
     df.fillna(-1, inplace=True) #because groupby doesn't show NA
     df1 = df.groupby([row_var, col_var]).size()
     #print df1
-
+    
     counties = sorted(df[row_var].unique())
     entities = sorted(df[col_var].unique())
     #print counties
@@ -92,12 +97,13 @@ def two_var_bar_plot_special():
                 'hancock county', 'harrison county','jackson county',
                 'orleans parish', 'jefferson parish', 'plaquemines parish','st. bernard parish', 'st. charles parish', 'st. john the baptist parish', 'st. tammany parish']
 
+
     vals = np.zeros((len(counties), len(entities)))
     for i, county in enumerate(counties):
         for j, entity in enumerate(entities):
             if entity in df1[county]:
                 vals[i][j] = df1[county][entity]
-
+    #print vals
 
     df2 = pd.DataFrame(vals, counties, entities)
     df2.plot(kind='bar', rot=-90)
@@ -140,6 +146,20 @@ def corr():
     #print df1.corr('pearson')
     print pearsonr(df1[v1],df1[v2])
     
+def generate_sample(dist, size):
+    #np.random.seed(seed=0)
+    samples = np.random.sample(size)
+    #print samples
+    num = len(dist)
+    result = np.zeros((size, num))
+
+    for i, s in enumerate(samples):
+        for j, p in enumerate(dist):
+            if s < p:
+                result[i][j] = 1
+                break
+    return result
+    
 ################################################
 # convert categorical var to dummy vars, fill in missing values
 def prep():
@@ -175,9 +195,11 @@ def prep():
     df['owner'].replace({"own":1, "rent":0, 'other':0}, inplace=True)
     df['pets'].fillna(0, inplace=True)
     df['pets'].replace({'yes':1, "no [skip to q108]":0}, inplace=True)
-    df['income'].replace({'less than $15,000':1, '$15,000 to $24,999':2, '$25,000 to $39,999':3, '$40,000 to $79,999':4, 'over $80,000':5}, inplace=True)
+    df['income'].replace({'less than $15,000':0, '$15,000 to $24,999':0, '$25,000 to $39,999':0, '$40,000 to $79,999':1, 'over $80,000':1}, inplace=True)
     df['edu'].fillna(0, inplace=True)
-    df['edu'].replace({'some high school':1, 'high school graduate':2, 'some college':3, 'college graduate':4, 'post graduate':5}, inplace=True)
+    df['edu'].replace({'some high school':0, 'high school graduate':0, 'some college':0, 'college graduate':1, 'post graduate':1}, inplace=True)
+    df_edu = pd.get_dummies(df['edu'],  drop_first=True)
+    df_edu.rename(columns={1:'college'}, inplace=True)
     df['house_type'].fillna(0, inplace=True)
     df['house_type'].replace({'detached single family home? [go to q95]':1, 'mobile home [skip to q96]':2, 
                               'duplex, triplex, quadraplex home? [skip to q99]':3, 'multi-fam bldg 4 stories or less? [apt/condo] [skip to q99]':3,
@@ -186,11 +208,20 @@ def prep():
     df_house_type = pd.get_dummies(df['house_type'], drop_first=True)
     df_house_type.rename(columns={1:'ht_single_fam', 2:'ht_mobile', 3:'ht_condo'}, inplace=True)
     df['house_material'].fillna(0, inplace=True)
-    df['house_material'].replace({'wood':1, 'brick':2, 'cement block':3, 'other [specify]':0}, inplace=True)
+    df['house_material'].replace({'wood':1, 'brick':2, 'cement block':2, 'other [specify]':0}, inplace=True)
     df_house_materi = pd.get_dummies(df['house_material'], drop_first=True)
-    df_house_materi.rename(columns={1:'hm_wood', 2:'hm_brick', 3:'hm_cement'}, inplace=True)
+    df_house_materi.rename(columns={1:'hm_wood', 2:'hm_brick_cement'}, inplace=True)
     
     df['heard_order'].replace({'yes [go to q44]':1, 'no [go to q49]':0}, inplace=True)
+    df['order_type'].fillna(0, inplace=True)
+    df['order_type'].replace({'should evacuate':1, 'mandatory':2},inplace=True)
+    df_order_type = pd.get_dummies(df['order_type'], drop_first=True)
+    df_order_type.rename(columns={1:'od_voluntary', 2:'od_mandatory'}, inplace=True)
+    df['know_evac_zone'].replace({'yes, i knew':1, 'no, did not know if home was in evacuation zone or not':0}, inplace=True)
+    df['in_evac_zone'].fillna(0, inplace=True)
+    df['in_evac_zone'].replace({'yes, home was in evacuation zone':1, 'no, home was not in evacuation zone':2}, inplace=True)
+    df_in_evac_zone = pd.get_dummies(df['in_evac_zone'], drop_first=True)
+    df_in_evac_zone.rename(columns={1:'ez_in_zone', 2:'ez_not_in_zone'}, inplace=True)
 
     #print df['heard_order'].value_counts(dropna=False)
     df['src_local_radio'].replace(map_info_src, inplace=True)
@@ -222,52 +253,78 @@ def prep():
     
     df['evac'].replace({'yes, evacuated':1,'no, did not evacuate':0}, inplace=True)
     
-    df = pd.concat([df, df_race, df_house_type, df_house_materi], axis=1)
+    
+    
+    df = pd.concat([df, df_race, df_edu, df_house_type, df_house_materi, df_order_type, df_in_evac_zone], axis=1)
     
     ##################################################
     # age, fill in using normal distribution 
     # num_child, num_elder, set to 0 if househd_size=1
-#     c1 = df['age'].dropna()
-#     mu = np.mean(c1)
-#     sigma = np.sqrt(np.var(c1))
-#     np.random.seed(1)
-#     samples_age = np.random.normal(mu, sigma, 141)
-    #print s
-#     plt.hist(s)
-#     plt.show()
-    #print df['age']
-    j = 0
+    c1 = df['age'].dropna()
+    mu = np.mean(c1)
+    sigma = np.sqrt(np.var(c1))
+    np.random.seed(1)
+    samples_age = np.random.normal(mu, sigma, 3200-len(c1))
+    
+    c2 = df['income'].dropna()
+    income_table = c2.value_counts()
+    high_rate = income_table.loc[1.0] / float(sum(income_table))
+    income_sample_size = 3200-len(c2)
+    np.random.seed(1)
+    samples = np.random.sample(income_sample_size)    
+    sample_income = np.zeros(income_sample_size)
+    for i, s in enumerate(samples):
+        if s < high_rate:
+            sample_income[i] = 1
+
+    j = 0 
+    k = 0
     for i, row in df.iterrows():
-#         if pd.isnull(row['age']):
-#             df.set_value(i, 'age', int(samples_age[j]))
-#             j += 1
+        if pd.isnull(row['age']):
+            df.set_value(i, 'age', int(samples_age[j]))
+            j += 1
+            
+        if pd.isnull(row['income']):
+            df.set_value(i, 'income', sample_income[k])
+            k += 1
 
         if row['househd_size'] == 1:
             df.set_value(i, 'num_child', 0)
             df.set_value(i, 'num_elder', 0)
             
-        #if row['heard_order'] == 1 and 
 
     ##################################################
-    # income, 
  
     cols = ['age', 'gender','r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
             'househd_size', 'num_child', 'num_elder', 
             'income','edu','owner','pets',
             'ht_single_fam', 'ht_mobile', 'ht_condo',
-            'hm_wood', 'hm_brick', 'hm_cement',
+            'hm_wood', 'hm_brick_cement',
             'coast_dist',
-            'heard_order', 
-            'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
-            'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
-            'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
-            'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+            'heard_order', 'od_voluntary', 'od_mandatory',
+            'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+#            'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+#            'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
+#            'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
+#           'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
             'evac']
+    
+#     cols = ['age', 'gender','r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
+#             'househd_size', 'num_child', 'num_elder', 
+#             'income','edu','owner','pets',
+#             'ht_single_fam', 'ht_mobile', 'ht_condo',
+#             'hm_wood', 'hm_brick_cement',
+#             'coast_dist',
+#             'heard_order', 'od_voluntary', 'od_mandatory',
+#             'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+#             'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+#             'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
+#             'evac']
 
     df1 = df[cols].dropna()
     print len(df1)
     
-    df1.to_csv('data/Ivan_common.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common_only_demographic.csv', columns=cols, index=False)
     
 
 
@@ -277,9 +334,9 @@ if __name__ == '__main__':
 
     #one_var_plot()
     #two_var_bar_plot()
-    two_var_bar_plot_special()
+    #two_var_bar_plot_special()
     #corr()
-    #prep()
+    prep()
     
 
     

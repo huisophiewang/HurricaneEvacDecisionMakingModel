@@ -101,8 +101,8 @@ def model_Xu():
     beta_2011voluntary = [0.6118, 0.5678, 0.0, 0.3109, 0.0, 0.4295, 0.0, 0.0, 0.0, 0.0]
     threshold_2011voluntary = [-0.2880, 0.0191, 0.4308, 1.0585, 1.7244, 2.0328]
     
-    #evac_rate_model_Xu(n, dist, beta_2011mandatory, threshold_2011mandatory)
-    evac_rate_model_Xu(n, dist, beta_2011voluntary, threshold_2011voluntary)
+    evac_rate_model_Xu(n, dist, beta_2011mandatory, threshold_2011mandatory)
+    #evac_rate_model_Xu(n, dist, beta_2011voluntary, threshold_2011voluntary)
     
     #print generate_sample([1.0, 1.0], 100)
     #write_sample(dist)
@@ -110,12 +110,13 @@ def model_Xu():
 def evac_rate_model_Wilmot(n, dist, beta, threshold):
     data = np.array([np.ones(n)]).T
     for factor in dist:
-        #print factor
+        print factor
         fdist = dist[factor]
         fdata = generate_sample(fdist, n)
         data = np.append(data, fdata, axis=1)
 
-    #print data.shape
+    print data.shape
+    print data
     count = 0
     res = np.zeros(n)
     y = 0
@@ -156,8 +157,8 @@ def model_Wilmot():
     
         
 if __name__ == '__main__':
-    #model_Xu()
-    model_Wilmot()
+    model_Xu()
+    #model_Wilmot()
 
     
 

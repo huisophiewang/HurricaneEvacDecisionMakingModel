@@ -7,6 +7,8 @@ from pprint import pprint
 import pylab 
 import scipy.stats as stats
 from scipy.stats.stats import pearsonr
+from scipy.stats import chisquare
+
 
 rename_demographic = OrderedDict([('q99','age'), ('gender','gender'),('q1110','race'), 
                       ('q102','househd_size'),('q103','num_child'),('q104','num_elder'),
@@ -14,7 +16,7 @@ rename_demographic = OrderedDict([('q99','age'), ('gender','gender'),('q1110','r
 rename_house = OrderedDict([('q94','house_type'), ('q95','house_material')])
 rename_loc = {'state':'state', 'samp':'county', 'city':'city', 'zip':'zip'}
 rename_official = {"q43":"heard_order", 'q44':'order_type'}
-rename_official_save = {"q43":"heard_order", 'q44':'order_type', 'q45':'door_to_door', 'q46':'order_first_src', 
+rename_official_all = {"q43":"heard_order", 'q44':'order_type', 'q45':'door_to_door', 'q46':'order_first_src', 
                    'q47':'early_enough', 'q48':'clear_enough', "q49":"responsible"}
 rename_info_src = OrderedDict([("q50a","src_local_radio"), ("q50b","src_local_tv"), 
             ("q50c","src_cable_cnn"), ("q50d","src_cable_weather_channel"), ("q50e","src_cable_other"),
@@ -45,11 +47,11 @@ def prep_related_vars():
     rename_all = OrderedDict()
     rename_all.update(rename_demographic)
     rename_all.update(rename_house)
-    rename_all.update(rename_official)
+    rename_all.update(rename_official_all)
     rename_all.update(rename_info_src)
     rename_all.update(rename_src_importance)
     rename_all.update(rename_concern)
-    rename_all.update(rename_scenario)
+#    rename_all.update(rename_scenario)
     rename_all.update(rename_evac)
 
     cols = rename_all.values()
@@ -96,7 +98,111 @@ def prep_related_vars():
     df['trust_local_media'].replace({'yes':1, 'no':0},inplace=True)
     df['seek_local_weather_office'].replace({'yes':1, 'no':0},inplace=True)
     df['see_track_map'].replace({'yes':1, 'no [skip to q65]':0},inplace=True)
+  
+def two_var_bar_plot_special():
+    df = pd.read_csv(os.path.join('data', 'IvanExport.csv'))
     
+    rename_all = {}
+    rename_all.update(rename_demographic)
+    rename_all.update(rename_loc)
+    rename_all.update(rename_official_all)
+    rename_all.update(rename_evac)
+    df.rename(columns=rename_all, inplace=True)
+
+
+    row_var  = 'county'
+    #col_var = 'race'
+#     col_val = 'heard_order'
+    col_var = 'responsible'
+#     col_var = 'race'
+    #col_var = 'income'
+    
+    df = df[[row_var, col_var]]
+    county_sample_size = df[row_var].value_counts(dropna=False)
+    df.fillna(-1, inplace=True) #because groupby doesn't show NA
+    df1 = df.groupby([row_var, col_var]).size()
+    #print df1
+    
+    counties = sorted(df[row_var].unique())
+    entities = sorted(df[col_var].unique())
+    #print counties
+    counties = ['monroe county', 
+                'bay county', 'escambia county', 'franklin county', 'gulf county',  'inland counties', 'okaloosa county',   'santa rosa county', 'walton county',
+                'baldwin county','mobile county',
+                'hancock county', 'harrison county','jackson county',
+                'orleans parish', 'jefferson parish', 'plaquemines parish','st. bernard parish', 'st. charles parish', 'st. john the baptist parish', 'st. tammany parish']
+
+
+    vals = np.zeros((len(counties), len(entities)))
+    for i, county in enumerate(counties):
+        for j, entity in enumerate(entities):
+            if entity in df1[county]:
+                vals[i][j] = df1[county][entity]
+    print vals
+
+    df2 = pd.DataFrame(vals, counties, entities)
+    df2.plot(kind='bar', rot=-90)
+    plt.show()  
+    
+def chi_square_test():
+    df = pd.read_csv(r'data/IvanExport.csv')
+    rename_all = {}
+    rename_all.update(rename_demographic)
+    rename_all.update(rename_loc)
+    rename_all.update(rename_official_all)
+    rename_all.update(rename_evac)
+    df.rename(columns=rename_all, inplace=True)
+    df['evac'].replace({'yes, evacuated':'yes','no, did not evacuate':'no'}, inplace=True)
+    df['responsible'].replace({'governor':'governor',"county or parish administrator":'county administrator', 'mayor':'mayor','local emergency management director':'local director', 
+                               'national hurricane center':'other', 'national weather service':'other', 'other [specify]':'other', 'police/sheriff':'local'}, inplace=True)
+    
+    df = df[['county', 'responsible', 'evac']]
+    df['responsible'].fillna('other', inplace=True)
+    #print df
+    counties = ['monroe county', 
+                'bay county', 'escambia county', 'franklin county', 'gulf county',  'inland counties', 'okaloosa county',   'santa rosa county', 'walton county',
+                'baldwin county','mobile county',
+                'hancock county', 'harrison county','jackson county',
+                'orleans parish', 'jefferson parish', 'plaquemines parish','st. bernard parish', 'st. charles parish', 'st. john the baptist parish', 'st. tammany parish']
+
+    #county = 'bay county' 
+    entities = ['governor','county administrator', 'mayor','local director','other']
+    print entities
+    for county in counties:
+        print '========================'
+        print county
+        df_select = df[(df.county==county)]
+        table = pd.crosstab(df_select['responsible'],df_select['evac'], margins=True)
+    #     
+        #races = ['white','black','hispanic', 'asian', 'native', 'other']
+        #races = ['white','black']
+        observed = np.zeros((len(entities),2))
+        for i, race in enumerate(entities):
+            if race in table.index:
+                observed[i][0] = table.loc[race]['no']
+                observed[i][1] = table.loc[race]['yes']
+        print observed
+        
+        evac_total = np.sum(observed, axis=0)
+        evac_by_race = np.sum(observed, axis=1)
+        evac_rate = evac_total[1] / float(sum(evac_total))
+        
+        expected = np.zeros((len(entities),2))
+        for i, race in enumerate(entities):
+            expected[i][0] = evac_by_race[i]*(1.0-evac_rate)
+            expected[i][1] = evac_by_race[i]*evac_rate
+        print expected
+        
+        dof = (observed.shape[0]-1)*(observed.shape[1]-1)
+        print chisquare(observed.flatten(),expected.flatten(), dof)
+        
+        chi_square = 0.0
+        for j in range(len(observed.flatten())):
+            chi_square += np.square((observed.flatten()[j] - expected.flatten()[j]))/expected.flatten()[j]
+        print chi_square
     
 if __name__ == '__main__':
-    prep_related_vars()
+    #prep_related_vars()
+    chi_square_test()
+    
+    
