@@ -187,11 +187,12 @@ def prep():
 #         print df[var].value_counts(dropna=False)
     #print df
     
-    df['gender'].replace({"male":0, "female":1}, inplace=True)
+    df['gender'].replace({"male":1, "female":0}, inplace=True)
     df['race'].fillna(0, inplace=True)
     df['race'].replace({"white or caucasian":1, "african american or black":2, "hispanic":3, "american indian":4, "asian":5, "other":0}, inplace=True)
     df_race = pd.get_dummies(df['race'], drop_first=True)
     df_race.rename(columns={1:'r_white', 2:'r_black', 3:'r_hispanic', 4:'r_asian', 5:'r_native'}, inplace=True)
+    
     df['owner'].replace({"own":1, "rent":0, 'other':0}, inplace=True)
     df['pets'].fillna(0, inplace=True)
     df['pets'].replace({'yes':1, "no [skip to q108]":0}, inplace=True)
@@ -289,20 +290,36 @@ def prep():
             k += 1
 
         if row['househd_size'] == 1:
+            #print i
             df.set_value(i, 'num_child', 0)
             df.set_value(i, 'num_elder', 0)
+    
+    for i, row in df.iterrows():       
+        # can also use np.where
+        if row['num_child'] > 0:
+            df.set_value(i, 'have_child', 1)
+        elif row['num_child'] == 0:
+            df.set_value(i, 'have_child', 0)
             
-
+        if row['num_elder'] > 0:
+            df.set_value(i, 'have_elder', 1)
+        elif row['num_elder'] == 0.0:
+            df.set_value(i, 'have_elder', 0)
+            
+            
     ##################################################
- 
-    cols = ['age', 'gender','r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
-            'househd_size', 'num_child', 'num_elder', 
+    
+    cols = ['age', 'gender',
+            'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
+            'househd_size', 
+            #'num_child', 'num_elder',
+            'have_child', 'have_elder', 
             'income','edu','owner','pets',
             'ht_single_fam', 'ht_mobile', 'ht_condo',
             'hm_wood', 'hm_brick_cement',
             'coast_dist',
-            'heard_order', 'od_voluntary', 'od_mandatory',
-            'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+            #'heard_order', 'od_voluntary', 'od_mandatory',
+            #'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
 #            'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
 #            'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
 #            'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
@@ -324,7 +341,7 @@ def prep():
     df1 = df[cols].dropna()
     print len(df1)
     
-    df1.to_csv('data/Ivan_common_only_demographic.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
     
 
 

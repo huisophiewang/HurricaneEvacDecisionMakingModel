@@ -60,7 +60,7 @@ def final_model(header, x, y, lam, norm):
 if __name__ == '__main__':
     #fp = os.path.join('result', 'feature', 'all_features_fp_openn_cls.csv')
     #fp = os.path.join('result', 'feature', 'all_features_all_traits_cls.csv')
-    fp = 'Lili_converted.csv'
+    fp = 'data/Lili_converted_v2.csv'
     #fp = "Lili_converted_v2.csv"
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     x = data[:,:-1]
     y = data[:,-1]
 
-    #cross_validate(x, y, fold=10, norm='l1')
+    cross_validate(x, y, fold=10, norm='l1')
     final_model(header, x, y, 0.391, 'l1')
     #final_model(header, x, y, 0.591, 'l1')
     

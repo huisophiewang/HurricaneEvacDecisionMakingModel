@@ -1,13 +1,14 @@
 import numpy as np
 from sklearn import linear_model
 from sklearn import svm
+from sklearn.model_selection import cross_val_score
 from pprint import pprint
 from operator import itemgetter 
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
-    #clf = linear_model.LogisticRegression(C=lam)
+    clf = linear_model.LogisticRegression(C=lam)
     #clf = linear_model.LogisticRegression(C=lam, penalty='l1')
-    clf = svm.SVC(C=lam)
+    #clf = svm.SVC(C=lam)
     
     clf.fit(x_train, y_train)
     predict = clf.predict(x_test)
@@ -45,10 +46,8 @@ def get_test_acc(x_train, y_train, x_test, y_test, lam, header):
     return acc
     
 
-
-
 def cross_validate(x, y, fold):
-    lam_range = np.arange(0.001, 2.0, 0.01)
+    lam_range = np.arange(0.001, 1.0, 0.01)
     lam_accs = []
     for lam in lam_range:
         accs = []
@@ -70,12 +69,26 @@ def cross_validate(x, y, fold):
     print "best lambda: %f" % best_lam
     return best_lam
 
+def final_model(header, x, y, lam):
+    clf = linear_model.LogisticRegression(C=lam)
+    #clf = svm.SVC(C=lam)
+    clf.fit(x, y)
+    print clf.coef_
+    print clf.intercept_
+    
+    coefs = {}
+    for i, c in enumerate(clf.coef_.T):
+        coefs[header[i]] = c[0]
+    res = sorted(coefs.items(), key=lambda x: abs(x[1]), reverse=True)
+    pprint(res)
+
 if __name__ == '__main__':
 
     fp = 'data/Ivan_common.csv'
     fp = 'data/Ivan_common_no_risk_perception.csv'
     fp = 'data/Ivan_common_only_demographic.csv'
-    #fp = 'Ivan_all_common.csv'
+    fp = 'data/Ivan_common_only_demographic_for_Bridgeport.csv'
+    
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
     
@@ -100,6 +113,14 @@ if __name__ == '__main__':
 
 
 
-    cross_validate(x, y, fold=10)
+    #cross_validate(x, y, fold=10)
+    #only_demographic.csv best lambda 0.021
+    final_model(header, x, y, 0.75)
+
+#     cls = linear_model.LogisticRegression()
+#     cv_score = cross_val_score(cls, x, y, cv=10, scoring='accuracy')
+#     print cv_score
+#     print "CV Score : Mean - %.7g | Std - %.7g | Min - %.7g | Max - %.7g" % (np.mean(cv_score),np.std(cv_score),np.min(cv_score),np.max(cv_score))
+
     
     
