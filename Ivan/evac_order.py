@@ -105,6 +105,7 @@ def two_var_bar_plot_special():
     rename_all = {}
     rename_all.update(rename_demographic)
     rename_all.update(rename_loc)
+    rename_all.update(rename_house)
     rename_all.update(rename_official_all)
     rename_all.update(rename_evac)
     df.rename(columns=rename_all, inplace=True)
@@ -112,10 +113,11 @@ def two_var_bar_plot_special():
 
     row_var  = 'county'
     #col_var = 'race'
-#     col_val = 'heard_order'
-    col_var = 'responsible'
+    #col_var = 'heard_order'
+#    col_var = 'responsible'
 #     col_var = 'race'
     #col_var = 'income'
+    col_var = 'house_type'
     
     df = df[[row_var, col_var]]
     county_sample_size = df[row_var].value_counts(dropna=False)
@@ -203,6 +205,7 @@ def chi_square_test():
     
 if __name__ == '__main__':
     #prep_related_vars()
-    chi_square_test()
+    #chi_square_test()
+    two_var_bar_plot_special()
     
     

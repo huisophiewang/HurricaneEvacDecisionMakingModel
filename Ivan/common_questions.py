@@ -8,6 +8,7 @@ import pylab
 import scipy.stats as stats
 from scipy.stats.stats import pearsonr
 
+
 rename_demographic = OrderedDict([('q99','age'), ('gender','gender'),('q1110','race'), 
                       ('q102','househd_size'),('q103','num_child'),('q104','num_elder'),
                       ('q105','owner'),('q106','pets'),('q112','income'),('q113','edu')])
@@ -27,6 +28,7 @@ rename_scenario = OrderedDict([('q65','sf_cat4_water'), ('q66','sf_cat4_wind_wat
                    ('q67','sf_cat3_water'), ('q68','sf_cat3_wind_water'),
                    ('q69','sf_cat2_water'), ('q70','sf_cat2_wind_water')])
 rename_evac = {'q2':'evac'}
+
 
 ########################################################################################
 # evac zone (q49a, q49b)
@@ -174,6 +176,7 @@ def prep():
     rename_all.update(rename_concern)
     rename_all.update(rename_scenario)
     rename_all.update(rename_evac)
+    rename_all.update(rename_loc)
 
     cols = rename_all.values()
     df.rename(columns=rename_all, inplace=True)
@@ -254,6 +257,11 @@ def prep():
     
     df['evac'].replace({'yes, evacuated':1,'no, did not evacuate':0}, inplace=True)
     
+    df['county'].replace({'monroe county':0, 
+                        'bay county':1, 'escambia county':2, 'franklin county':3, 'gulf county':4, 'inland counties':5, 'okaloosa county':6,  'santa rosa county':7, 'walton county':8,
+                        'baldwin county':9,'mobile county':10,
+                        'hancock county':11, 'harrison county':12,'jackson county':13,
+                        'orleans parish':14, 'jefferson parish':15, 'plaquemines parish':16, 'st. bernard parish':17, 'st. charles parish':18, 'st. john the baptist parish':19, 'st. tammany parish':20}, inplace=True)
     
     
     df = pd.concat([df, df_race, df_edu, df_house_type, df_house_materi, df_order_type, df_in_evac_zone], axis=1)
@@ -318,30 +326,24 @@ def prep():
             'ht_single_fam', 'ht_mobile', 'ht_condo',
             'hm_wood', 'hm_brick_cement',
             'coast_dist',
-            #'heard_order', 'od_voluntary', 'od_mandatory',
-            #'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
-#            'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
-#            'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
-#            'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
-#           'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+'heard_order', 'od_voluntary', 'od_mandatory',
+'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
+'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
+'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+'county',
             'evac']
     
-#     cols = ['age', 'gender','r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
-#             'househd_size', 'num_child', 'num_elder', 
-#             'income','edu','owner','pets',
-#             'ht_single_fam', 'ht_mobile', 'ht_condo',
-#             'hm_wood', 'hm_brick_cement',
-#             'coast_dist',
-#             'heard_order', 'od_voluntary', 'od_mandatory',
-#             'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
-#             'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
-#             'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
-#             'evac']
+
 
     df1 = df[cols].dropna()
     print len(df1)
     
-    df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
+    
+    #df1.to_csv('data/Ivan_common.csv', columns=cols, index=False)
+    #df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common_with_county.csv', columns=cols, index=False)
     
 
 

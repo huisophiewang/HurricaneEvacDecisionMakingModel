@@ -4,6 +4,8 @@ from sklearn import svm
 from sklearn.model_selection import cross_val_score
 from pprint import pprint
 from operator import itemgetter 
+from util import COUNTIES, STATES
+from util import county_to_state
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     clf = linear_model.LogisticRegression(C=lam)
@@ -69,25 +71,100 @@ def cross_validate(x, y, fold):
     print "best lambda: %f" % best_lam
     return best_lam
 
-def final_model(header, x, y, lam):
+def final_model(header, x, y, lam=1.0):
     clf = linear_model.LogisticRegression(C=lam)
     #clf = svm.SVC(C=lam)
     clf.fit(x, y)
-    print clf.coef_
-    print clf.intercept_
+    #print clf.coef_
+    #print clf.intercept_
     
     coefs = {}
     for i, c in enumerate(clf.coef_.T):
         coefs[header[i]] = c[0]
     res = sorted(coefs.items(), key=lambda x: abs(x[1]), reverse=True)
     pprint(res)
+    
+def get_acc_by_state(x, y, header):
+    by_county_total = [0]*len(COUNTIES)
+    by_county_correct = [0]*len(COUNTIES)
+    ct_t_pos = [0]*len(COUNTIES)
+    ct_t_neg = [0]*len(COUNTIES)
+    ct_f_pos = [0]*len(COUNTIES)
+    ct_f_neg = [0]*len(COUNTIES)
+    
+    by_state_total = [0]*len(STATES)
+    by_state_correct = [0]*len(STATES)
+    
+    np.random.seed(0)
+    indices = np.random.permutation(data.shape[0])
+#     split = int(data.shape[0]*0.1)
+#     test_idx, train_idx = indices[:split], indices[split:]
+#     x_train, x_test = x[train_idx], x[test_idx]
+#     y_train, y_test = y[train_idx], y[test_idx]
+    clf = linear_model.LogisticRegression()
+    clf.fit(x, y)
+    
+    coefs = {}
+    for i, c in enumerate(clf.coef_.T):
+        coefs[header[i]] = c[0]
+    res = sorted(coefs.items(), key=lambda x: abs(x[1]), reverse=True)
+    pprint(res)
+    
+    y_predict = clf.predict(x)
+    for i in indices:
+        c = int(x[i][-1])
+        s = county_to_state(c)
+        by_county_total[c] += 1
+        by_state_total[s] += 1
+        
+        if y_predict[i] == y[i]:
+            by_county_correct[c] += 1
+            by_state_correct[s] += 1
+            
+        if y_predict[i]==1 and y[i]==1:
+            ct_t_pos[c] += 1
+        if y_predict[i]==0 and y[i]==0:
+            ct_t_neg[c] += 1
+        if y_predict[i]==1 and y[i]==0:
+            ct_f_pos[c] += 1
+        if y_predict[i]==0 and y[i]==1:
+            ct_f_neg[c] += 1
+        
+    county_acc = {}
+    for j in range(len(COUNTIES)):
+        print '--------------'
+        c=COUNTIES[j]
+        print c
+        print by_county_total[j]
+        acc = float(by_county_correct[j])/by_county_total[j]
+        print acc
+        print ct_t_pos[j]
+        print ct_t_neg[j]
+        print ct_f_pos[j]
+        print ct_f_neg[j]
+        county_acc[c] = acc
+    #pprint(sorted(county_acc.items(), key=lambda x:x[1]))
+    
+    for j in range(len(STATES)):
+        print '-------'
+        print STATES[j]
+        print by_state_total[j]
+        acc = float(by_state_correct[j])/by_state_total[j]
+        print acc
+            
+        
+        
+        
+    
 
+    
 if __name__ == '__main__':
 
-    fp = 'data/Ivan_common.csv'
-    fp = 'data/Ivan_common_no_risk_perception.csv'
-    fp = 'data/Ivan_common_only_demographic.csv'
-    fp = 'data/Ivan_common_only_demographic_for_Bridgeport.csv'
+    #fp = 'data/Ivan_common.csv'
+    #fp = 'data/Ivan_common_no_risk_perception.csv'
+    #fp = 'data/Ivan_common_only_demographic.csv'
+    #fp = 'data/Ivan_common_only_demographic_for_Bridgeport.csv'
+    fp = 'data/Ivan_common_with_county.csv'
     
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
@@ -96,6 +173,8 @@ if __name__ == '__main__':
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     x = data[:,:-1]
     y = data[:,-1]
+    
+    get_acc_by_state(x, y, header)
     
 
     
@@ -115,12 +194,16 @@ if __name__ == '__main__':
 
     #cross_validate(x, y, fold=10)
     #only_demographic.csv best lambda 0.021
-    final_model(header, x, y, 0.75)
+    #final_model(header, x, y, 1.0)
 
 #     cls = linear_model.LogisticRegression()
+#     #cls = svm.SVC()
 #     cv_score = cross_val_score(cls, x, y, cv=10, scoring='accuracy')
 #     print cv_score
 #     print "CV Score : Mean - %.7g | Std - %.7g | Min - %.7g | Max - %.7g" % (np.mean(cv_score),np.std(cv_score),np.min(cv_score),np.max(cv_score))
+
+    
+
 
     
     

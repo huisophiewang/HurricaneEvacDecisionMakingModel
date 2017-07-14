@@ -55,18 +55,18 @@ def plot_feature_rank(alg, dtrain, predictors, target):
 
 if __name__ == '__main__':
 
-    #fp = 'data/Ivan_common.csv'
+    fp = 'data/Ivan_common.csv'
     #fp = 'data/Ivan_common_no_risk_perception.csv'
-    fp = 'data/Ivan_common_only_demographic.csv'
-    fp = 'data/Ivan_common_only_demographic_for_bridgeport.csv'
+    #fp = 'data/Ivan_common_only_demographic.csv'
+    #fp = 'data/Ivan_common_only_demographic_for_bridgeport.csv'
     
-#     fr = open(fp, 'rU')
-#     header = fr.readline().split(',')
-#     fr.close()
-#     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
-#     x = data[:,:-1]
-#     y = data[:,-1]
-#     
+    fr = open(fp, 'rU')
+    header = fr.readline().split(',')
+    fr.close()
+    data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
+    x = data[:,:-1]
+    y = data[:,-1]
+   
 #     np.random.seed(0)
 #     indices = np.random.permutation(data.shape[0])
 #     split1 = int(data.shape[0]*0.8)
@@ -78,15 +78,12 @@ if __name__ == '__main__':
     #gradient_boost(x_train, y_train, x_test, y_test)
     
 
-    data = pd.read_csv(fp)
-    target = 'evac'
-    predictors = [x for x in data.columns if x not in [target]]
-
-    
-    train_data, test_data = train_test_split(data, test_size=0.2, random_state=0)
-
-    train_x, train_y = train_data[predictors], train_data[target]
-    test_x, test_y = test_data[predictors], test_data[target]
+#     data = pd.read_csv(fp)
+#     target = 'evac'
+#     predictors = [x for x in data.columns if x not in [target]]
+#     train_data, test_data = train_test_split(data, test_size=0.2, random_state=0)
+#     train_x, train_y = train_data[predictors], train_data[target]
+#     test_x, test_y = test_data[predictors], test_data[target]
     
 
     
@@ -124,13 +121,13 @@ if __name__ == '__main__':
     
 
     
-    cls = GradientBoostingClassifier(criterion='friedman_mse', init=None,
-              learning_rate=0.05, loss='deviance', max_depth=4,
-              max_features='sqrt', max_leaf_nodes=None,
-              min_impurity_split=1e-07, min_samples_leaf=20,
-              min_samples_split=200, min_weight_fraction_leaf=0.0,
-              n_estimators=50, presort='auto', random_state=10,
-              subsample=0.8, verbose=0, warm_start=False)
+#     cls = GradientBoostingClassifier(criterion='friedman_mse', init=None,
+#               learning_rate=0.05, loss='deviance', max_depth=4,
+#               max_features='sqrt', max_leaf_nodes=None,
+#               min_impurity_split=1e-07, min_samples_leaf=20,
+#               min_samples_split=200, min_weight_fraction_leaf=0.0,
+#               n_estimators=50, presort='auto', random_state=10,
+#               subsample=0.8, verbose=0, warm_start=False)
    
 
 #     cls.fit(train_x, train_y)
@@ -143,6 +140,10 @@ if __name__ == '__main__':
 #     print auc
   
 
-    cross_valid(cls, data, predictors, target)
+    cls = GradientBoostingClassifier()
+    cv_score = cross_val_score(cls, x, y, cv=10, scoring='accuracy')
+    print cv_score
+    print "CV Score : Mean - %.7g | Std - %.7g | Min - %.7g | Max - %.7g" % (np.mean(cv_score),np.std(cv_score),np.min(cv_score),np.max(cv_score))
+
     
     
