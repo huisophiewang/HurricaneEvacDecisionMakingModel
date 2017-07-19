@@ -6,6 +6,7 @@ from pprint import pprint
 from operator import itemgetter 
 from util import COUNTIES, STATES
 from util import county_to_state
+from sklearn import metrics
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     clf = linear_model.LogisticRegression(C=lam)
@@ -143,7 +144,7 @@ def get_acc_by_state(x, y, header):
         print ct_f_pos[j]
         print ct_f_neg[j]
         county_acc[c] = acc
-    #pprint(sorted(county_acc.items(), key=lambda x:x[1]))
+    pprint(sorted(county_acc.items(), key=lambda x:x[1]))
     
     for j in range(len(STATES)):
         print '-------'
@@ -174,7 +175,14 @@ if __name__ == '__main__':
     x = data[:,:-1]
     y = data[:,-1]
     
-    get_acc_by_state(x, y, header)
+    #get_acc_by_state(x, y, header)
+    
+    
+    clf = linear_model.LogisticRegression()
+    clf.fit(x, y)
+    y_predict = clf.predict(x)
+    predict_acc = metrics.f1_score(y_predict, y)
+    print predict_acc
     
 
     
@@ -193,12 +201,12 @@ if __name__ == '__main__':
 
 
     #cross_validate(x, y, fold=10)
-    #only_demographic.csv best lambda 0.021
-    #final_model(header, x, y, 1.0)
+    #best lambda 0.021
+    #final_model(header, x, y, 0.021)
 
 #     cls = linear_model.LogisticRegression()
 #     #cls = svm.SVC()
-#     cv_score = cross_val_score(cls, x, y, cv=10, scoring='accuracy')
+#     cv_score = cross_val_score(cls, x, y, cv=10, scoring='f1')
 #     print cv_score
 #     print "CV Score : Mean - %.7g | Std - %.7g | Min - %.7g | Max - %.7g" % (np.mean(cv_score),np.std(cv_score),np.min(cv_score),np.max(cv_score))
 
