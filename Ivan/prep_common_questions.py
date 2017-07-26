@@ -248,16 +248,21 @@ def prep(fp):
     df['sf_cat3_wind_water'].replace({'yes':1, 'no':0}, inplace=True)
     df['sf_cat2_wind_water'].replace({'yes':1, 'no':0}, inplace=True)
     
+    df['state'].replace({'FL':0, 'AL':1, 'MS':2, 'LA':3}, inplace=True)
+    df_state = pd.get_dummies(df['state'], drop_first=True)
+    df_state.rename(columns={1:'st_AL', 2:'st_MS', 3:'st_LA'}, inplace=True)
+    
+#     df['county'].replace({'monroe county':0, 
+#                     'bay county':1, 'escambia county':2, 'franklin county':3, 'gulf county':4, 'inland counties':5, 'okaloosa county':6,  'santa rosa county':7, 'walton county':8,
+#                     'baldwin county':9,'mobile county':10,
+#                     'hancock county':11, 'harrison county':12,'jackson county':13,
+#                     'orleans parish':14, 'jefferson parish':15, 'plaquemines parish':16, 'st. bernard parish':17, 'st. charles parish':18, 'st. john the baptist parish':19, 'st. tammany parish':20}, inplace=True)
+  
     df['evac'].replace({'yes, evacuated':1,'no, did not evacuate':0}, inplace=True)
     
-    df['county'].replace({'monroe county':0, 
-                        'bay county':1, 'escambia county':2, 'franklin county':3, 'gulf county':4, 'inland counties':5, 'okaloosa county':6,  'santa rosa county':7, 'walton county':8,
-                        'baldwin county':9,'mobile county':10,
-                        'hancock county':11, 'harrison county':12,'jackson county':13,
-                        'orleans parish':14, 'jefferson parish':15, 'plaquemines parish':16, 'st. bernard parish':17, 'st. charles parish':18, 'st. john the baptist parish':19, 'st. tammany parish':20}, inplace=True)
+
     
-    
-    df = pd.concat([df, df_race, df_edu, df_house_type, df_house_materi, df_order_type, df_in_evac_zone], axis=1)
+    df = pd.concat([df, df_race, df_edu, df_house_type, df_house_materi, df_order_type, df_in_evac_zone, df_state], axis=1)
     
     ##################################################
     # age, fill in using normal distribution 
@@ -326,7 +331,7 @@ def prep(fp):
 'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
 'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
 'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
-'county',
+#'st_AL','st_MS','st_LA',
             'evac']
     
 
@@ -339,7 +344,7 @@ def prep(fp):
     #df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
     
     
-    df1.to_csv('data/Ivan_common_with_county.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common.csv', columns=cols, index=False)
     
 
 
