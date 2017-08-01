@@ -7,11 +7,11 @@ from operator import itemgetter
 from util import COUNTIES, STATES
 from util import county_to_state
 from sklearn import metrics
+from sklearn import preprocessing
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
-    clf = linear_model.LogisticRegression(C=lam)
-    #clf = linear_model.LogisticRegression(C=lam, penalty='l1')
-    #clf = svm.SVC(C=lam)
+    clf = linear_model.LogisticRegression(C=lam, penalty='l1')
+    #clf = svm.SVC(C=lam, kernel='poly')
     
     clf.fit(x_train, y_train)
     predict = clf.predict(x_test)
@@ -20,7 +20,7 @@ def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     return acc
 
 def get_lambda(x_train, y_train, x_valid, y_valid):
-    lam_range = np.arange(0.001, 2.0, 0.1)
+    lam_range = np.arange(1.5, 3.0, 0.1)
     accs = []
     for lam in lam_range:
         acc = sklearn_logistic_reg(x_train, y_train, x_valid, y_valid, lam)
@@ -50,7 +50,7 @@ def get_test_acc(x_train, y_train, x_test, y_test, lam, header):
     
 
 def cross_validate(x, y, fold):
-    lam_range = np.arange(0.001, 1.0, 0.01)
+    lam_range = np.arange(0.01, 2, 0.01)
     lam_accs = []
     for lam in lam_range:
         accs = []
@@ -83,7 +83,8 @@ def final_model(header, x, y, lam=1.0):
     for i, c in enumerate(clf.coef_.T):
         coefs[header[i]] = c[0]
     res = sorted(coefs.items(), key=lambda x: abs(x[1]), reverse=True)
-    pprint(res)
+    for pair in res:
+        print '%s %.4f' % (pair[0].ljust(30), pair[1])
     
 def get_acc_by_state(x, y, header):
     by_county_total = [0]*len(COUNTIES)
@@ -154,18 +155,27 @@ def get_acc_by_state(x, y, header):
         print acc
             
         
-        
+def normalize_test(arr):
+    res = []
+    
+    mean = np.mean(arr)
+    variance = np.var(arr)
+    for p in arr:
+        q = (p - mean) / variance
+        res.append(q)
+    print res         
         
     
 
     
 if __name__ == '__main__':
 
-    #fp = 'data/Ivan_common.csv'
+    fp = 'data/Ivan_common.csv'
     #fp = 'data/Ivan_common_no_risk_perception.csv'
     #fp = 'data/Ivan_common_only_demographic.csv'
     #fp = 'data/Ivan_common_only_demographic_for_Bridgeport.csv'
-    fp = 'data/Ivan_common_with_county.csv'
+    #fp = 'data/Ivan_common_with_county.csv'
+    #fp = 'data/Ivan_common_only_objective.csv'
     
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
@@ -175,14 +185,19 @@ if __name__ == '__main__':
     x = data[:,:-1]
     y = data[:,-1]
     
+
+    evac_rate = sum(y)/float(len(y))
+    majority = max(evac_rate, 1.0-evac_rate)
+    print 'baseline: %.4f' % majority
+    
     #get_acc_by_state(x, y, header)
     
     
-    clf = linear_model.LogisticRegression()
-    clf.fit(x, y)
-    y_predict = clf.predict(x)
-    predict_acc = metrics.f1_score(y_predict, y)
-    print predict_acc
+#     clf = linear_model.LogisticRegression()
+#     clf.fit(x, y)
+#     y_predict = clf.predict(x)
+#     predict_acc = metrics.f1_score(y_predict, y)
+#     print predict_acc
     
 
     
@@ -200,9 +215,13 @@ if __name__ == '__main__':
 
 
 
-    #cross_validate(x, y, fold=10)
+    
+    cross_validate(x, y, fold=10)
     #best lambda 0.021
-    #final_model(header, x, y, 0.021)
+    final_model(header, x, y, 0.08)
+    
+    #s = 'hello world'
+    #print s.rjust(10)
 
 #     cls = linear_model.LogisticRegression()
 #     #cls = svm.SVC()

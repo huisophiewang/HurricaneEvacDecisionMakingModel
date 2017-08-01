@@ -8,8 +8,6 @@ import pylab
 import scipy.stats as stats
 from scipy.stats.stats import pearsonr
 
-from prep_var_coast_dist import add_coast_dist_elev
-
 
 rename_demographic = OrderedDict([('q99','age'), ('gender','gender'),('q1110','race'), 
                       ('q102','househd_size'),('q103','num_child'),('q104','num_elder'),
@@ -184,6 +182,7 @@ def prep(fp):
     df.rename(columns=rename_all, inplace=True)
     
     df['gender'].replace({"male":1, "female":0}, inplace=True)
+    df.rename(columns={'gender':'male'}, inplace=True)
     df['race'].fillna(0, inplace=True)
     df['race'].replace({"white or caucasian":1, "african american or black":2, "hispanic":3, "american indian":4, "asian":5, "other":0}, inplace=True)
     df_race = pd.get_dummies(df['race'], drop_first=True)
@@ -193,10 +192,12 @@ def prep(fp):
     df['pets'].fillna(0, inplace=True)
     df['pets'].replace({'yes':1, "no [skip to q108]":0}, inplace=True)
     df['income'].replace({'less than $15,000':0, '$15,000 to $24,999':0, '$25,000 to $39,999':0, '$40,000 to $79,999':1, 'over $80,000':1}, inplace=True)
+    df.rename(columns={'income':'income_above_4k'}, inplace=True)
     df['edu'].fillna(0, inplace=True)
     df['edu'].replace({'some high school':0, 'high school graduate':0, 'some college':0, 'college graduate':1, 'post graduate':1}, inplace=True)
     df_edu = pd.get_dummies(df['edu'],  drop_first=True)
-    df_edu.rename(columns={1:'college'}, inplace=True)
+    df_edu.rename(columns={1:'college_edu'}, inplace=True)
+    
     df['house_type'].fillna(0, inplace=True)
     df['house_type'].replace({'detached single family home? [go to q95]':1, 'mobile home [skip to q96]':2, 
                               'duplex, triplex, quadraplex home? [skip to q99]':3, 'multi-fam bldg 4 stories or less? [apt/condo] [skip to q99]':3,
@@ -266,6 +267,7 @@ def prep(fp):
     
     ##################################################
     # age, fill in using normal distribution 
+    # income, fill in using existing distribution (binormial)
     # num_child, num_elder, set to 0 if househd_size=1
     c1 = df['age'].dropna()
     mu = np.mean(c1)
@@ -273,7 +275,7 @@ def prep(fp):
     np.random.seed(1)
     samples_age = np.random.normal(mu, sigma, 3200-len(c1))
     
-    c2 = df['income'].dropna()
+    c2 = df['income_above_4k'].dropna()
     income_table = c2.value_counts()
     high_rate = income_table.loc[1.0] / float(sum(income_table))
     income_sample_size = 3200-len(c2)
@@ -291,8 +293,8 @@ def prep(fp):
             df.set_value(i, 'age', int(samples_age[j]))
             j += 1
             
-        if pd.isnull(row['income']):
-            df.set_value(i, 'income', sample_income[k])
+        if pd.isnull(row['income_above_4k']):
+            df.set_value(i, 'income_above_4k', sample_income[k])
             k += 1
 
         if row['househd_size'] == 1:
@@ -315,23 +317,34 @@ def prep(fp):
             
     ##################################################
     
-    cols = ['age', 'gender',
+    cols = ['age', 'male',
             'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
             'househd_size', 
             #'num_child', 'num_elder',
             'have_child', 'have_elder', 
-            'income','edu','owner','pets',
+            'income_above_4k','college_edu',
+            'owner','pets',
             'ht_single_fam', 'ht_mobile', 'ht_condo',
             'hm_wood', 'hm_brick_cement',
             'coast_dist',
             'elevation',
-'heard_order', 'od_voluntary', 'od_mandatory',
-'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
-'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
-'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
-'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
-'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
-#'st_AL','st_MS','st_LA',
+            'issued_mandatory', 'issued_voluntary',
+# 'heard_order', 'od_voluntary', 'od_mandatory',
+# 'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+# 'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+# 'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
+# 'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
+# 'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+            'evac']
+    
+    cols = ['male',
+            'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
+            'have_child',
+            'income_above_4k','college_edu',
+            'ht_single_fam', 'ht_mobile', 'ht_condo',
+            'coast_dist',
+            'elevation',
+            'issued_mandatory', 'issued_voluntary',
             'evac']
     
 
@@ -344,7 +357,7 @@ def prep(fp):
     #df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
     
     
-    df1.to_csv('data/Ivan_common.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common_for_bridgeport.csv', columns=cols, index=False)
     
 
 
@@ -357,7 +370,9 @@ if __name__ == '__main__':
     #two_var_bar_plot_special()
     #corr()
     
-    fp = r'data/IvanExport_dist_elev.csv'
+    #fp = r'data/IvanExport_dist.csv'
+    #fp = r'data/IvanExport_dist_elev.csv'
+    fp = r'data/IvanExport_addvars.csv'
     prep(fp)
 
     

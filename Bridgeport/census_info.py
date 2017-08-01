@@ -8,7 +8,7 @@ tract_ids = [701, 702, 703, 704, 705, 706, 709, 710,
           738, 739, 740, 743, 744, 2572]
 
 factors = ['Male', 'Female',
-           'White Alone', 'Black or African American Alone', 'American Indian and Alaska Native Alone','Asian Alone',
+           'White Alone', 'Black or African American Alone', 'American Indian and Alaska Native Alone','Asian Alone','Some Other Race Alone',
            'Households with One or More People Under 18 Years:', 'In Labor Force:', 
            'Less than High School', 'High School Graduate (Includes Equivalency)', 'Some College', 
            "Bachelor's Degree", "Master's Degree", 'Professional School Degree', 'Doctorate Degree',

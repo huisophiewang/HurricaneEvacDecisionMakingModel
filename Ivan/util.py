@@ -1,3 +1,6 @@
+import math
+import numpy as np
+
 COUNTIES = ['monroe county', 
             'bay county', 'escambia county', 'franklin county', 'gulf county',  'inland counties', 'okaloosa county',   'santa rosa county', 'walton county',
             'baldwin county','mobile county',
@@ -224,5 +227,6 @@ def county_to_state(i):
         state = 4
     return state
         
+  
         
     

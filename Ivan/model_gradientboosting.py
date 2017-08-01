@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier  #GBM algorithm
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 #from sklearn import cross_validation, metrics   #Additional scklearn functions
 #from sklearn.grid_search import GridSearchCV   #Perforing grid search
 from sklearn import svm
@@ -13,6 +15,7 @@ from sklearn import metrics
 from pprint import pprint
 import matplotlib.pylab as plt
 from matplotlib.pylab import rcParams
+from sklearn.ensemble.weight_boosting import AdaBoostClassifier
 rcParams['figure.figsize'] = 12, 4
 
 def split_train_test(fp):
@@ -82,16 +85,17 @@ def evaluation(alg, dtrain, predictors, target, performCV=True, printFeatureImpo
     #Print Feature Importance:
     if printFeatureImportance:
         feat_imp = pd.Series(alg.feature_importances_, predictors).sort_values(ascending=False)
+        pprint(feat_imp)
         feat_imp.plot(kind='bar', title='Feature Importances')
         plt.ylabel('Feature Importance Score')
         plt.show()
     
-def tune_paramenters(df, predictors, target):
+def tune_parameters(df, predictors, target):
 
     
     
     cls = GradientBoostingClassifier(random_state=0)
-    print cls
+    evaluation(cls, df, predictors, target)
    
 
 #     param_test1 = {'n_estimators':range(20,120,10), 'learning_rate':np.linspace(0.05, 0.2, 4)}
@@ -151,18 +155,17 @@ def tune_paramenters(df, predictors, target):
     
     #return final_model
     
-def tune_parameters1(df, predictors, target):
-
-    for alpha in [0.9, 1.0]:
+def tune(df, predictors, target):
+    for alpha in np.linspace(0.01, 0.2, 10):
         print '--------------'
-        for n in range(5,30,5):
+        for n in range(10, 500, 50):
             print 'learning rate: %f, n_estimators: %d' % (alpha, n)
+
             cls = GradientBoostingClassifier(learning_rate=alpha, 
                                                        n_estimators=n,
-                                                       max_depth=10,
+                                                       max_depth=4,
                                                        random_state=0)
-             
-             
+    
             evaluation(cls, df, predictors, target)
 
 #     param_test1 = {'n_estimators':range(50,800,50), 'learning_rate':[0.001, 0.01, 0.1, 0.2]}
@@ -174,7 +177,15 @@ def tune_parameters1(df, predictors, target):
 #     gsearch1.fit(df[predictors],df[target])
 #     pprint(gsearch1.grid_scores_)
 #     print gsearch1.best_params_
-#     print gsearch1.best_score_   
+#     print gsearch1.best_score_  
+
+def test_model(df, predictors, target):
+
+    for n in range(10, 500, 50):
+        
+        cls = RandomForestClassifier(n_estimators=n)
+    #cls = GradientBoostingClassifier()
+        evaluation(cls, df, predictors, target)
              
 if __name__ == '__main__':
 
@@ -182,7 +193,7 @@ if __name__ == '__main__':
     #fp = 'data/Ivan_common_no_risk_perception.csv'
     #fp = 'data/Ivan_common_only_demographic.csv'
     #fp = 'data/Ivan_common_only_demographic_for_bridgeport.csv'
-    fp = 'data/Ivan_common_with_county.csv'
+    #fp = 'data/Ivan_common_with_county.csv'
     
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
@@ -198,11 +209,15 @@ if __name__ == '__main__':
     majority = max(evac_rate, 1.0-evac_rate)
     print 'baseline: %.4f' % majority
     
-    tune_parameters1(df, predictors, target)
-    #final_model = tune_paramenters(df, predictors, target)
-    #evaluation(final_model, df, predictors, target)
+    #tune_parameters2(df, predictors, target)
+    #final_model = tune(df, predictors, target)
+    
+    cls = GradientBoostingClassifier(random_state=2)
+    evaluation(cls, df, predictors, target, True, True, 10)
 #     plot_feature_rank(final_model, df, predictors, target)
 #     get_train_acc(final_model, df, predictors, target)
+
+    #test_model(df, predictors, target)
 
   
 

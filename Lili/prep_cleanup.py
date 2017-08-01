@@ -156,20 +156,15 @@ def prep_with_dist():
     df = np.genfromtxt(r'data/LiliBasicData_BN_Dist.csv', delimiter=",", dtype=float, names=True)
     #print df
     qlabels = df.dtype.names
-#     labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
-#               'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
-#               'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
-#               'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
-#               'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
-# #               'DistRiver','DistLake','DistCoast',
-#               'Evac'
-#               ]
+
 
     labels = ['Age', 'Gender', 'Race', 'Marriage', 'HouseholdSize', 'NumChd', 'Edu', 'Income', 'Owner','HouseStruct',
               'SrcLocalAuth', 'SrcLocalMedia', 'SrcNationalMedia', 'SrcInternet', 'SrcPeers',
               'CloseCoast', 'CloseWater', 'SeeStormCond', 'SeeShopClose', 'SeePeerEvac',
               'OfficialHurricWatch', 'OfficialEvac', 'PrevStormExp', 'PrevFalseAlarm', 
               'ProtectFromLooter', 'ProtectFromStorm', 'LostIncome', 'EvacExpense', 'Traffic',
+              'County',
+              'DistRiver','DistLake','DistCoast',
               'Evac'
               ]
     out = []
