@@ -50,7 +50,7 @@ def get_test_acc(x_train, y_train, x_test, y_test, lam, header):
     
 
 def cross_validate(x, y, fold):
-    lam_range = np.arange(0.01, 2, 0.01)
+    lam_range = np.arange(0.01, 1, 0.01)
     lam_accs = []
     for lam in lam_range:
         accs = []
@@ -175,11 +175,12 @@ if __name__ == '__main__':
     #fp = 'data/Ivan_common_only_demographic.csv'
     #fp = 'data/Ivan_common_only_demographic_for_Bridgeport.csv'
     #fp = 'data/Ivan_common_with_county.csv'
-    #fp = 'data/Ivan_common_only_objective.csv'
+    #fp = 'data/Ivan_common_only_subjective.csv'
+    #fp = 'data/Ivan_common_LA.csv'
+    #fp = 'data/Ivan_common_only_objective_FL.csv'
     
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
-    
     fr.close()
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     x = data[:,:-1]
@@ -190,17 +191,7 @@ if __name__ == '__main__':
     majority = max(evac_rate, 1.0-evac_rate)
     print 'baseline: %.4f' % majority
     
-    #get_acc_by_state(x, y, header)
-    
-    
-#     clf = linear_model.LogisticRegression()
-#     clf.fit(x, y)
-#     y_predict = clf.predict(x)
-#     predict_acc = metrics.f1_score(y_predict, y)
-#     print predict_acc
-    
 
-    
 #     np.random.seed(0)
 #     indices = np.random.permutation(data.shape[0])
 #     split1 = int(data.shape[0]*0.8)
@@ -212,11 +203,8 @@ if __name__ == '__main__':
 #     lam = get_lambda(x_train, y_train, x_valid, y_valid)
 #     get_test_acc(x_train, y_train, x_test, y_test, lam, header)
     
-
-
-
-    
-    cross_validate(x, y, fold=10)
+   
+    #cross_validate(x, y, fold=10)
     #best lambda 0.021
     final_model(header, x, y, 0.08)
     

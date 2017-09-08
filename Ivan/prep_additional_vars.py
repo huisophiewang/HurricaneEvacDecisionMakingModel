@@ -6,6 +6,7 @@ from geopy.distance import great_circle
 # latitude 24.3 ~ 30.9 (range 90)
 
 # from http://naturalearthdata.com/downloads/10m-physical-vectors
+# used software qgis to convert to csv
 def get_coastline_gps():
     #fr = open('data/coastline_gps_ne_50m.csv', 'rU')
     fr = open('data/coastline_gps_ne_10m.csv', 'rU')

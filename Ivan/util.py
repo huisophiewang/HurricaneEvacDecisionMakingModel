@@ -7,7 +7,7 @@ COUNTIES = ['monroe county',
             'hancock county', 'harrison county','jackson county',
             'orleans parish', 'jefferson parish', 'plaquemines parish','st. bernard parish', 'st. charles parish', 'st. john the baptist parish', 'st. tammany parish']
 
-STATES = ['FL Keys', 'FL Panhandle', 'AL', 'MS', 'LA']
+STATES = ['FL', 'AL', 'MS', 'LA']
 
 ZIP_TO_HT = {'32320':19,
 '32322':42,

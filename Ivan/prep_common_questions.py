@@ -249,9 +249,9 @@ def prep(fp):
     df['sf_cat3_wind_water'].replace({'yes':1, 'no':0}, inplace=True)
     df['sf_cat2_wind_water'].replace({'yes':1, 'no':0}, inplace=True)
     
-    df['state'].replace({'FL':0, 'AL':1, 'MS':2, 'LA':3}, inplace=True)
-    df_state = pd.get_dummies(df['state'], drop_first=True)
-    df_state.rename(columns={1:'st_AL', 2:'st_MS', 3:'st_LA'}, inplace=True)
+    #df['state'].replace({'FL':0, 'AL':1, 'MS':2, 'LA':3}, inplace=True)
+    #df_state = pd.get_dummies(df['state'], drop_first=True)
+    #df_state.rename(columns={1:'st_AL', 2:'st_MS', 3:'st_LA'}, inplace=True)
     
 #     df['county'].replace({'monroe county':0, 
 #                     'bay county':1, 'escambia county':2, 'franklin county':3, 'gulf county':4, 'inland counties':5, 'okaloosa county':6,  'santa rosa county':7, 'walton county':8,
@@ -263,7 +263,7 @@ def prep(fp):
     
 
     
-    df = pd.concat([df, df_race, df_edu, df_house_type, df_house_materi, df_order_type, df_in_evac_zone, df_state], axis=1)
+    df = pd.concat([df, df_race, df_edu, df_house_type, df_house_materi, df_order_type, df_in_evac_zone], axis=1)
     
     ##################################################
     # age, fill in using normal distribution 
@@ -317,7 +317,7 @@ def prep(fp):
             
     ##################################################
     
-    cols = ['age', 'male',
+    all_cols = ['age', 'male',
             'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
             'househd_size', 
             #'num_child', 'num_elder',
@@ -328,37 +328,66 @@ def prep(fp):
             'hm_wood', 'hm_brick_cement',
             'coast_dist',
             'elevation',
-            'issued_mandatory', 'issued_voluntary',
-# 'heard_order', 'od_voluntary', 'od_mandatory',
-# 'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
-# 'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
-# 'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
-# 'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
-# 'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+            #'issued_mandatory', 'issued_voluntary',
+'heard_order', 'od_voluntary', 'od_mandatory',
+'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+'importance_nhc', 'importance_local_media', 'trust_local_media', 'seek_local_weather_office', 'see_track_map',
+'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
+'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+            'state',
+            'county',
+            'zip',
             'evac']
-    
-    cols = ['male',
+
+# objective    
+    obj_cols = ['male','age',
             'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
-            'have_child',
+            'have_child', 'have_elder',
             'income_above_4k','college_edu',
             'ht_single_fam', 'ht_mobile', 'ht_condo',
             'coast_dist',
             'elevation',
             'issued_mandatory', 'issued_voluntary',
+            'state',
+            'county',
             'evac']
     
+# subjective
+    subj_cols = ['heard_order', 'od_voluntary', 'od_mandatory',
+            'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+            'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+            'importance_nhc', 'importance_local_media', 'trust_local_media', #'seek_local_weather_office', 'see_track_map',
+            'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
+            'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+            'state',
+            #'county',
+            'evac']
+    
+    pprint(all_cols)
 
-
+    cols = obj_cols
     df1 = df[cols].dropna()
     print len(df1)
+    #df1.to_csv('data/Ivan_common_only_objective_state_county.csv', columns=cols, index=False)
+#     df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
+    #df1.to_csv('data/Ivan_common_only_objective_state_county.csv', columns=cols, index=False)
     
+#     for s in ['FL', 'AL', 'MS', 'LA']:
+#         df2 = df1[df1['state']==s]
+#         new_cols = [x for x in cols if x not in ['state']]
+#         df2.to_csv('data/Ivan_common_only_subjective_%s.csv' % s, columns=new_cols, index=False)
+        
+    #print df1['state'=='FL']
+    #print df1.male == 0
+    #print df1.loc[:,'male']
+    #print df1[df1['male']==0]
+    #print df1['male']
+    #print df1['male']==0
+    #print df1.loc[df1['state']=='FL']
+
     
-    #df1.to_csv('data/Ivan_common.csv', columns=cols, index=False)
-    #df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
-    
-    
-    df1.to_csv('data/Ivan_common_for_bridgeport.csv', columns=cols, index=False)
-    
+
 
 
     

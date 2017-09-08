@@ -62,8 +62,8 @@ def model_Ivan():
     # have_child, income > 40k, college edu, 
     # mobile home, single family home, coast dist
     # unable to use: age (divided by range), househd_size, house material, pets, owner
-    # what is condo?
-   # beta = [0.0021, -0.3273, 0.0629, 0.2697, 0.0560, 0.2688, 0.9263, -0.1647, -0.0373]
+    
+    #beta = [0.0021, -0.3273, 0.0629, 0.2697, 0.0560, 0.2688, 0.9263, -0.1647, -0.0373]
     sample = generate_bridgeport_data()
     n = sample.shape[0]
     

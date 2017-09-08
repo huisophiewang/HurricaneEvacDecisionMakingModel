@@ -27,10 +27,15 @@ def get_tract_center():
             tract_id ='2572'
         else:
             tract_id = items[2][1:-2]
-        #print tract_id
+
         if int(tract_id) in tract_ids:
-            tract_gps[tract_id] = (items[4], items[5].strip('\n'))
+            lati = items[4]
+            longi = items[5].strip('\n') 
+            tract_gps[tract_id] = (lati, longi)
+            
+            print tract_id, lati, longi
     #pprint(tract_gps)   
+    
     return tract_gps
             
 # def get_coastline_gps():
@@ -60,8 +65,10 @@ def get_coast_dist(center_gps, coastline_gps):
             d = vincenty(center_gps[str(id)], point).miles
             all_d.append(d)
         min_d = min(all_d)
-        print min_d
-        outline = '%s,%s\n' % (id, min_d)
+ 
+        #print min_d
+        outline = '%s,%.4f\n' % (id, min_d)
+        print outline
         fw.write(outline)
     fw.close()
         
@@ -69,4 +76,4 @@ def get_coast_dist(center_gps, coastline_gps):
 
 if __name__ == '__main__':
     center_gps = get_tract_center()
-    get_coast_dist(center_gps, coastline_gps)
+    #get_coast_dist(center_gps, coastline_gps)

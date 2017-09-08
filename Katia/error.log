@@ -1,0 +1,350 @@
+2017-09-07 15:01:02,770 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 15:01:02,808 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 15:01:02,819 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 15:01:02,819 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 15:03:47,785 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:27:04,171 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:27:04,391 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:27:04,653 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:27:05,174 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:56:20,075 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:56:20,362 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:56:20,480 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 16:56:20,917 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:14:05,168 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:14:05,710 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:14:06,005 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:14:06,240 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:15:26,255 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:15:26,285 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 17:15:26,552 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 18:37:28,539 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 18:37:28,773 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 18:37:29,213 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 18:37:31,059 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 20:33:52,226 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 22:25:39,315 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 22:48:18,562 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 22:48:18,625 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 22:48:18,861 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-07 22:59:43,206 stream error
+Traceback (most recent call last):
+  File "stream.py", line 51, in stream_to_json
+    stream.filter(track=['katia'])
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 445, in filter
+    self._start(async)
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 361, in _start
+    self._run()
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 294, in _run
+    raise exception
+AttributeError: 'NoneType' object has no attribute 'strip'
+2017-09-08 00:50:58,877 stream error
+Traceback (most recent call last):
+  File "stream.py", line 51, in stream_to_json
+    stream.filter(track=['katia'])
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 445, in filter
+    self._start(async)
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 361, in _start
+    self._run()
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 294, in _run
+    raise exception
+ReadTimeoutError: HTTPSConnectionPool(host='stream.twitter.com', port=443): Read timed out.
+2017-09-08 00:58:08,762 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 00:58:09,132 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 00:58:09,355 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 00:58:11,174 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 00:58:45,964 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 01:02:03,154 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 01:02:04,640 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 01:02:05,296 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 01:02:08,319 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 02:52:02,357 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 02:52:06,289 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 02:52:07,219 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 02:55:46,701 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 03:36:52,551 stream error
+Traceback (most recent call last):
+  File "stream.py", line 51, in stream_to_json
+    stream.filter(track=['katia'])
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 445, in filter
+    self._start(async)
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 361, in _start
+    self._run()
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 294, in _run
+    raise exception
+ReadTimeoutError: HTTPSConnectionPool(host='stream.twitter.com', port=443): Read timed out.
+2017-09-08 05:35:10,384 stream error
+Traceback (most recent call last):
+  File "stream.py", line 51, in stream_to_json
+    stream.filter(track=['katia'])
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 445, in filter
+    self._start(async)
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 361, in _start
+    self._run()
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 294, in _run
+    raise exception
+ReadTimeoutError: HTTPSConnectionPool(host='stream.twitter.com', port=443): Read timed out.
+2017-09-08 05:48:15,842 stream error
+Traceback (most recent call last):
+  File "stream.py", line 51, in stream_to_json
+    stream.filter(track=['katia'])
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 445, in filter
+    self._start(async)
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 361, in _start
+    self._run()
+  File "C:\Python27\lib\site-packages\tweepy\streaming.py", line 294, in _run
+    raise exception
+ProtocolError: ('Connection broken: IncompleteRead(0 bytes read, 1796 more expected)', IncompleteRead(0 bytes read, 1796 more expected))
+2017-09-08 08:45:29,713 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 09:23:02,079 data error
+Traceback (most recent call last):
+  File "stream.py", line 22, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 11:11:49,743 data error
+Traceback (most recent call last):
+  File "C:\Users\Sophie\workspace\Hurricane\Katia\stream.py", line 32, in on_data
+    month = "%02d" % time.strptime(crt[4:7],'%b').tm_mon
+AttributeError: 'module' object has no attribute '_strptime_time'
+2017-09-08 12:08:44,318 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 12:39:50,690 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 12:40:16,822 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 12:40:17,013 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 12:40:17,921 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 12:40:19,740 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 13:50:01,471 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 13:53:09,424 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 13:56:11,638 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 15:59:36,717 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 16:48:04,282 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 16:48:05,486 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 16:48:09,128 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
+2017-09-08 17:16:57,368 data error
+Traceback (most recent call last):
+  File "stream.py", line 29, in on_data
+    print '%s @%s: %s' % (decoded['created_at'][:-11], decoded['user']['screen_name'], decoded['text'].encode('ascii', 'ignore'))
+KeyError: 'created_at'
