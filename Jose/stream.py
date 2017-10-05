@@ -13,10 +13,10 @@ import os
 # consumer_key = "uGR6NQOLUIXmzSSuJFSFhbY3i"
 # consumer_secret = "AeRZnA0ziRlNYSSQIjLyh84uObw9b2iiTghDPZukIwhjwsbH1H"
 
-access_token = "84530015-w89FAuFtTUvoNDtVS7RZwrCiQt0asWx6fpSXDgbtx"
-access_token_secret = "BRzX0YgpXDS6Us4xgHlGwxzWAKetmHYsTCswkygmHoo0b"
-consumer_key = "KwdMLUNxWYuiGUBw9farA0OSy"
-consumer_secret = "ER1ugfvw4dMkRISLaoXa8FI7pg4hRtKlxOHYuc1EwnFWgvOume"
+access_token = "84530015-pBpdPD8QCsJksYTosHvIjicAtAC8t8FhVdxGreCt7"
+access_token_secret = "JGZ4KNFiqPtYm1E5wAlXLMhzpqtA49Dk4ucXeYZ256PT5"
+consumer_key = "uGR6NQOLUIXmzSSuJFSFhbY3i"
+consumer_secret = "AeRZnA0ziRlNYSSQIjLyh84uObw9b2iiTghDPZukIwhjwsbH1H"
 
 logging.basicConfig(filename='error.log',level=logging.WARNING, format='%(asctime)s %(message)s')
 class MyListener(StreamListener):

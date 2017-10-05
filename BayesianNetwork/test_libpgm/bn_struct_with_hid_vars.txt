@@ -1,0 +1,89 @@
+{	
+	"V": ["issued_order", "close_to_coast", "ht_mobile", 
+		"income_above_4k", "pets", "have_child",
+		"hid1", "hid2", "evac"],
+	"E": [
+			["issued_order", "hid1"],
+			["close_to_coast", "hid1"],
+			["ht_mobile", "hid1"],
+			["income_above_2k", "hid2"],
+			["pets","hid2"],
+			["have_child", "hid2"]
+		 ],
+	"Vdata": {
+		"issued_order": {
+			"ord": 0,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": None,
+			"children": ["hid1"],
+			"cprob": []
+		},
+		"close_to_coast": {
+			"ord": 1,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": None,
+			"children": ["hid1"],
+			"cprob": []
+		},
+		"ht_mobile": {
+			"ord": 2,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": None,
+			"children": ["hid1"],
+			"cprob": []
+		},
+		"income_above_4k": {
+			"ord": 3,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": None,
+			"children": ["hid2"],
+			"cprob": []
+		},
+		"pets": {
+			"ord": 4,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": None,
+			"children": ["hid2"],
+			"cprob": []
+		},
+		"have_child": {
+			"ord": 5,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": None,
+			"children": ["hid2"],
+			"cprob": []
+		},
+		"hid1": {
+			"ord": 6,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": ["issued_order", "close_to_coast", "ht_mobile"],
+			"children": ["evac"],
+			"cprob": []
+		},
+		"hid2": {
+			"ord": 7,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": ["income_above_4k", "pets", "have_child"],
+			"children": ["evac"],
+			"cprob": []
+		},
+		"evac": {
+			"ord": 8,
+			"numoutcomes": 2,
+			"vals": [0,1],
+			"parents": ["hid1", "hid2"],
+			"children": None,
+			"cprob": []
+		},
+		
+		
+			
+}

@@ -156,28 +156,29 @@ def tune_parameters(df, predictors, target):
     #return final_model
     
 def tune(df, predictors, target):
-    for alpha in np.linspace(0.01, 0.2, 10):
-        print '--------------'
-        for n in range(10, 500, 50):
-            print 'learning rate: %f, n_estimators: %d' % (alpha, n)
+#     #for alpha in np.linspace(0.01, 0.2, 10):
+#     for alpha in np.linspace(0.01, 0.2, 10):
+#         print '--------------'
+#         for n_trees in range(10, 300, 30):
+#             print 'learning rate: %f, n_estimators: %d' % (alpha, n_trees)
+# 
+#             cls = GradientBoostingClassifier(learning_rate=alpha, 
+#                                                        n_estimators=n_trees,
+#                                                        max_depth=3,
+#                                                        random_state=0)
+#     
+#             evaluation(cls, df, predictors, target)
 
-            cls = GradientBoostingClassifier(learning_rate=alpha, 
-                                                       n_estimators=n,
-                                                       max_depth=4,
-                                                       random_state=0)
-    
-            evaluation(cls, df, predictors, target)
-
-#     param_test1 = {'n_estimators':range(50,800,50), 'learning_rate':[0.001, 0.01, 0.1, 0.2]}
-#     gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(
-#                                                    
-#                                                    #max_depth=4,
-#                                                    random_state=0),
-#                             param_grid = param_test1, scoring='accuracy',cv=10, n_jobs=4)    
-#     gsearch1.fit(df[predictors],df[target])
-#     pprint(gsearch1.grid_scores_)
-#     print gsearch1.best_params_
-#     print gsearch1.best_score_  
+    param_test1 = {'n_estimators':range(10, 420, 50), 'learning_rate':np.linspace(0.01, 0.2, 10)}
+    gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(
+                                                    
+                                                   max_depth=2,
+                                                   random_state=0),
+                            param_grid = param_test1, scoring='accuracy',cv=10, n_jobs=4)    
+    gsearch1.fit(df[predictors],df[target])
+    pprint(gsearch1.grid_scores_)
+    print gsearch1.best_params_
+    print gsearch1.best_score_  
 
 def test_model(df, predictors, target):
 
@@ -194,6 +195,7 @@ if __name__ == '__main__':
     #fp = 'data/Ivan_common_only_demographic.csv'
     #fp = 'data/Ivan_common_only_demographic_for_bridgeport.csv'
     #fp = 'data/Ivan_common_with_county.csv'
+    fp = 'C:\Users\Sophie\workspace\Hurricane\BayesianNet\Ivan_common_test3.csv'
     
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
@@ -209,15 +211,16 @@ if __name__ == '__main__':
     majority = max(evac_rate, 1.0-evac_rate)
     print 'baseline: %.4f' % majority
     
-    #tune_parameters2(df, predictors, target)
+    tune(df, predictors, target)
     #final_model = tune(df, predictors, target)
     
-    cls = GradientBoostingClassifier(random_state=2)
-    evaluation(cls, df, predictors, target, True, True, 10)
+    #cls = GradientBoostingClassifier(random_state=2)
+    #evaluation(cls, df, predictors, target, True, True, 10)
+    
 #     plot_feature_rank(final_model, df, predictors, target)
 #     get_train_acc(final_model, df, predictors, target)
 
-    #test_model(df, predictors, target)
+
 
   
 

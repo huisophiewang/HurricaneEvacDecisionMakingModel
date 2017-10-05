@@ -84,11 +84,11 @@ def correlation_test():
     print metrics.matthews_corrcoef(df['ht_mobile'], df['evac'])
     print stats.pearsonr(df['ht_mobile'], df['evac'])
     
-def pearson_corr():
+def pearson_corr(fp):
     
     #fp = 'data/Ivan_common_state_county.csv'
     #fp = 'data/Ivan_common_state_county_zip.csv'
-    fp = 'data/Ivan_common.csv'
+    
     df = pd.read_csv(fp)
     total = len(df)
     vars = [x for x in df.columns.values if x not in['evac','state','county', 'zip']]
@@ -151,6 +151,8 @@ if __name__ == '__main__':
     #chi_square_test()
 
     #correlation_test()
-    pearson_corr()
+    #fp = 'data/Ivan_common.csv'
+    fp = r'C:\Users\Sophie\workspace\Hurricane\BayesianNet\Ivan_common_test3.csv'
+    pearson_corr(fp)
 
     #debug()

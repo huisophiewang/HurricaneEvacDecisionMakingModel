@@ -4,12 +4,13 @@ import time
 import os
 import logging
 import datetime
+from pprint import pprint
   
 #Variables that contains the user credentials to access Twitter API 
-access_token = "84530015-w89FAuFtTUvoNDtVS7RZwrCiQt0asWx6fpSXDgbtx"
-access_token_secret = "BRzX0YgpXDS6Us4xgHlGwxzWAKetmHYsTCswkygmHoo0b"
-consumer_key = "KwdMLUNxWYuiGUBw9farA0OSy"
-consumer_secret = "ER1ugfvw4dMkRISLaoXa8FI7pg4hRtKlxOHYuc1EwnFWgvOume"
+access_token = "84530015-pBpdPD8QCsJksYTosHvIjicAtAC8t8FhVdxGreCt7"
+access_token_secret = "JGZ4KNFiqPtYm1E5wAlXLMhzpqtA49Dk4ucXeYZ256PT5"
+consumer_key = "uGR6NQOLUIXmzSSuJFSFhbY3i"
+consumer_secret = "AeRZnA0ziRlNYSSQIjLyh84uObw9b2iiTghDPZukIwhjwsbH1H"
 
 logging.basicConfig(filename='search_error_test.log',level=logging.INFO, format='%(asctime)s %(message)s')
 
@@ -53,7 +54,9 @@ def search(dt):
     api = tweepy.API(auth)
     #to_dir = dt
  
-    to_dir = os.path.join("E:\Irma\Search", dt)
+    #to_dir = os.path.join(r"E:\Irma\Search", dt)
+    to_dir = os.path.join("Search",dt)
+           
     
     # when start search for a new date
     if not os.path.exists(to_dir):
@@ -64,33 +67,74 @@ def search(dt):
         try:
             # when resume from waiting or unfinished search, 
             # read the last line of latest file to get max_id
+            
             files = os.listdir(to_dir)
-            latest_file = sorted(files)[0]   
-            f_latest_file = open(os.path.join(to_dir, latest_file))
-            lastline = f_latest_file.readlines()[-1]
-            next_max_id = json.loads(lastline)['id']                                
-            tweets = query_api(api, dt, max_id = next_max_id)
-             
-            if len(tweets)==1:
-                logging.info("search finished!")
-                print "search finished!"
-                break
-            else:
-                write_to_json(tweets[1:], to_dir)
+            fw_name = sorted(files)[0]   
+            fw_path = os.path.join(to_dir, fw_name)
+            
+            # if file size is too big, rename it, copy the last line, start a new file
+            size = os.path.getsize(fw_path) / float(1000000)
+            if size > 800:
+                temp_name = fw_name[:-5] + '_save.json'
+                os.rename(fw_path, os.path.join(to_dir, temp_name))
+                lastline = open(os.path.join(to_dir, temp_name)).readlines()[-1]
+                fw = open(fw_path, 'a')
+                fw.write(lastline)
+                fw.close()
+                
+            with open(os.path.join(to_dir, fw_name)) as fw:
+                lastline = fw.readlines()[-1]
+                fw.close()
+                next_max_id = json.loads(lastline)['id']                                
+                tweets = query_api(api, dt, max_id = next_max_id)
+                 
+                if len(tweets)==1:
+                    logging.info("search finished!")
+                    print "search finished!"
+                    break
+                else:
+                    write_to_json(tweets[1:], to_dir)
+
+            
         except tweepy.error.TweepError:
+            print datetime.datetime.now()
             logging.exception("search error") 
             print 'waiting...'
             time.sleep(15 * 60)
         except Exception as e:
+            print datetime.datetime.now()
             logging.exception("other error") 
     return
 
     
 if __name__ == '__main__': 
-    dates = ['20170908']     
+    dt = '20170910'
+    #hr = '17'
     #dates = ['20161007'] 
-    for dt in dates:
-        search(dt)
+    
+    
+    #for dt in dates:
+    search(dt)
+    
+
+
+#     to_dir = os.path.join("Search",dt)
+#     files = os.listdir(to_dir)
+#     pprint(files)
+#     fw_name = sorted(files)[0] 
+#     print fw_name
+#     
+#     
+#     fp = os.path.join(to_dir, fw_name)
+#     temp_name = fw_name[:-5] + '_1.json'
+#     os.rename(fp, os.path.join(to_dir, temp_name))
+#     
+    #open(os.path.join(to_dir, fw_name)).readlines()[-1]
+#     lastline = open(os.path.join(to_dir, temp_name)).readlines()[-1]
+#     print lastline
+#     fw = open(os.path.join(to_dir, fw_name), 'a')
+#     fw.write(lastline)
+#     fw.close()
 
 
 

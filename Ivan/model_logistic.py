@@ -8,10 +8,12 @@ from util import COUNTIES, STATES
 from util import county_to_state
 from sklearn import metrics
 from sklearn import preprocessing
+from sklearn.naive_bayes import BernoulliNB
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
-    clf = linear_model.LogisticRegression(C=lam, penalty='l1')
+    #clf = linear_model.LogisticRegression(C=lam, penalty='l1')
     #clf = svm.SVC(C=lam, kernel='poly')
+    clf = BernoulliNB(alpha=lam)
     
     clf.fit(x_train, y_train)
     predict = clf.predict(x_test)
@@ -50,7 +52,7 @@ def get_test_acc(x_train, y_train, x_test, y_test, lam, header):
     
 
 def cross_validate(x, y, fold):
-    lam_range = np.arange(0.01, 1, 0.01)
+    lam_range = np.arange(0.01, 1.5, 0.01)
     lam_accs = []
     for lam in lam_range:
         accs = []
@@ -170,7 +172,7 @@ def normalize_test(arr):
     
 if __name__ == '__main__':
 
-    fp = 'data/Ivan_common.csv'
+    #fp = 'data/Ivan_common.csv'
     #fp = 'data/Ivan_common_no_risk_perception.csv'
     #fp = 'data/Ivan_common_only_demographic.csv'
     #fp = 'data/Ivan_common_only_demographic_for_Bridgeport.csv'
@@ -178,6 +180,7 @@ if __name__ == '__main__':
     #fp = 'data/Ivan_common_only_subjective.csv'
     #fp = 'data/Ivan_common_LA.csv'
     #fp = 'data/Ivan_common_only_objective_FL.csv'
+    fp = 'C:\Users\Sophie\workspace\Hurricane\BayesianNet\Ivan_common_test3.csv'
     
     fr = open(fp, 'rU')
     header = fr.readline().split(',')
@@ -204,9 +207,9 @@ if __name__ == '__main__':
 #     get_test_acc(x_train, y_train, x_test, y_test, lam, header)
     
    
-    #cross_validate(x, y, fold=10)
-    #best lambda 0.021
-    final_model(header, x, y, 0.08)
+    cross_validate(x, y, fold=10)
+    #best lambda 0.08
+    #final_model(header, x, y, 0.08)
     
     #s = 'hello world'
     #print s.rjust(10)

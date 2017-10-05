@@ -1,0 +1,29 @@
+questions:
+- how to evaluate EM result?
+	cross-valid?
+	log likelihood?
+	bic score
+	KL divergence
+	
+--------------------------
+KL divergence:
+all the models we build, they have the same joint distribution, because we build from the same set of data
+if from different sets of data, we can compute histogram, and KL divergence, like in personality project
+
+
+
+==========================
+	
+- select a set of variables
+
+- assume complete data
+	learn parameter
+	learn structure
+	learn both
+	
+- assume incomplete data
+	learn parameter
+	learn structure
+	learn both
+
+	

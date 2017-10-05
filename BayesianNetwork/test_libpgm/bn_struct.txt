@@ -1,0 +1,12 @@
+{	
+	"V": ["issued_order", "close_to_coast", "ht_mobile", 
+		"income_above_4k", "pets", "have_child",
+		"evac"],
+	"E": [["issued_order", "evac"],
+			["close_to_coast", "evac"],
+			["ht_mobile", "evac"],
+			["income_above_4k", "evac"],
+			["pets","evac"],
+			["have_child", "evac"]
+		 ]
+}

@@ -328,7 +328,7 @@ def prep(fp):
             'hm_wood', 'hm_brick_cement',
             'coast_dist',
             'elevation',
-            #'issued_mandatory', 'issued_voluntary',
+            'issued_mandatory', 'issued_voluntary',
 'heard_order', 'od_voluntary', 'od_mandatory',
 'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
 'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
@@ -336,42 +336,43 @@ def prep(fp):
 'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
 'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
             'state',
-            'county',
-            'zip',
+            #'county',
+            #'zip',
             'evac']
 
-# objective    
-    obj_cols = ['male','age',
-            'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
-            'have_child', 'have_elder',
-            'income_above_4k','college_edu',
-            'ht_single_fam', 'ht_mobile', 'ht_condo',
-            'coast_dist',
-            'elevation',
-            'issued_mandatory', 'issued_voluntary',
-            'state',
-            'county',
-            'evac']
-    
-# subjective
-    subj_cols = ['heard_order', 'od_voluntary', 'od_mandatory',
-            'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
-            'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
-            'importance_nhc', 'importance_local_media', 'trust_local_media', #'seek_local_weather_office', 'see_track_map',
-            'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
-            'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
-            'state',
-            #'county',
-            'evac']
+# # objective    
+#     obj_cols = ['male','age',
+#             'r_white', 'r_black', 'r_hispanic', 'r_asian', 'r_native',
+#             'have_child', 'have_elder',
+#             'income_above_4k','college_edu',
+#             'ht_single_fam', 'ht_mobile', 'ht_condo',
+#             'coast_dist',
+#             'elevation',
+#             'issued_mandatory', 'issued_voluntary',
+#             'state',
+#             'county',
+#             'evac']
+#     
+# # subjective
+#     subj_cols = ['heard_order', 'od_voluntary', 'od_mandatory',
+#             'know_evac_zone', 'ez_in_zone', 'ez_not_in_zone',
+#             'src_local_radio', 'src_local_tv', 'src_cable_cnn', 'src_cable_weather_channel', 'src_cable_other', 'src_internet',
+#             'importance_nhc', 'importance_local_media', 'trust_local_media', #'seek_local_weather_office', 'see_track_map',
+#             'concern_wind', 'concern_fld_surge', 'concern_fld_rainfall', 'concern_tornado',
+#             'sf_cat4_water','sf_cat4_wind_water','sf_cat3_water','sf_cat3_wind_water','sf_cat2_water','sf_cat2_wind_water',
+#             'state',
+#             #'county',
+#             'evac']
     
     pprint(all_cols)
 
-    cols = obj_cols
+    cols = all_cols
     df1 = df[cols].dropna()
     print len(df1)
     #df1.to_csv('data/Ivan_common_only_objective_state_county.csv', columns=cols, index=False)
 #     df1.to_csv('data/Ivan_common_only_demographic_for_Bridgeport.csv', columns=cols, index=False)
     #df1.to_csv('data/Ivan_common_only_objective_state_county.csv', columns=cols, index=False)
+    df1.to_csv('data/Ivan_common_with_states.csv', columns=cols, index=False)
     
 #     for s in ['FL', 'AL', 'MS', 'LA']:
 #         df2 = df1[df1['state']==s]
