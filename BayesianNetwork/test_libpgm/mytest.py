@@ -4,6 +4,7 @@ import json
 from libpgm.graphskeleton import GraphSkeleton
 from libpgm.pgmlearner import PGMLearner
 from pprint import pprint
+import os
 
 
 def select_vars(df):
@@ -15,20 +16,12 @@ def select_vars(df):
         else:
             df.set_value(i, 'close_to_coast', 0)
             
-        if row['elevation'] > 10.0:
-            df.set_value(i, 'high_elev', 1)
-        else:
-            df.set_value(i, 'high_elev', 0)
-            
         if row['issued_mandatory']==1 or row['issued_voluntary']==1:
             df.set_value(i, 'issued_order', 1)
         else:
             df.set_value(i, 'issued_order', 0)
     
-    #df1 = df[['close_to_coast','ht_mobile','sf_cat3_wind_water','evac']]
-#     obj_cols = ['issued_order','close_to_coast', 'high_elev', 'ht_mobile', 'hm_brick_cement', 
-#                 'income_above_4k', 'college_edu','owner', 'pets', 'have_child','have_elder',
-#                 'evac']
+
     obj_cols = ['issued_order','close_to_coast','ht_mobile', 
                 'income_above_4k', 'pets', 'have_child',
                 'evac']
@@ -53,7 +46,8 @@ def test_libpgm(df1):
     print json.dumps(result.Vdata, indent=2)
     
 if __name__ == '__main__':
-    fp = 'Ivan_common.csv'
+    fp = 'C:\Users\Sophie\workspace\Hurricane\BayesianNetwork\data\Ivan_common.csv'
     df = pd.read_csv(fp)
     df1 = select_vars(df)
     test_libpgm(df1)
+    #print os.getcwd()
