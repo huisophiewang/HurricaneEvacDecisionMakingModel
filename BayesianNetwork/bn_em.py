@@ -36,7 +36,7 @@ def sample(N):
 
 	infer = BayesianModelSampling(bn_generate)
 	data = infer.forward_sample(N)
-	return data
+	return data, bn_generate
 
 
 def rand_miss(df, node, miss_size):
@@ -77,11 +77,33 @@ def get_parent_values_idx(parents_card, parents_val):
 			idx += val*np.prod(np.array(parents_card[(j+1):]))
 	return idx
 
-def EM(df, bn_model, miss_node):
-	###########################################################################
-	# E_step
-	# only need to infer the prob of the missing node, because other nodes we already observed
-	# that affects sufficient stats in two occasions: when miss_node is child, when miss_node is parent
+def compute_instance_prob(bn_model, instance, topo_order):
+	instance_prob = 1.0
+	for node in topo_order:
+		node_cpd = bn_model.get_cpds(node)
+		#print node_cpd
+		parents = node_cpd.variables[1:]
+		node_val = int(instance[node])
+		if not parents:
+			val_prob = node_cpd.values[node_val]
+		else:
+			val_prob = node_cpd.values
+			for var in node_cpd.variables:
+				parent_val = int(instance[var])
+				val_prob = val_prob[parent_val]			
+		instance_prob *= val_prob
+	#print instance_prob
+	return instance_prob
+			
+	
+
+###########################################################################
+# E_step
+# update sufficient stats by summing P(x,u | d(i),theta), assume we know the parameters of the bn model
+# only two type of nodes are affected,  miss node and its children
+# we only need to compute the prob of the miss node, other nodes we already observed their values
+def E_step(df, bn_model, miss_node):
+	
 	miss_idx = df[df[miss_node].isnull()].index.tolist()
 	infer = VariableElimination(bn_model)
 	
@@ -91,29 +113,18 @@ def EM(df, bn_model, miss_node):
 		if not successor in affected_nodes:
 			affected_nodes.append(successor)
 			
-	
-	for node in affected_nodes:
-		if node == miss_node:
-			continue
-		
+	affected_nodes_suffi_stats = {}
+	for node in affected_nodes:		
 		node_cpd = bn_model.get_cpds(node=node)
 		node_card = node_cpd.cardinality[0]
 		parents = node_cpd.variables[1:]
 		parents_card = node_cpd.cardinality[1:]
 		parents_total_card = np.prod(np.array(parents_card))  
 		
-				
-   
-		# use 2d array because later we need to marginalize over the child node 
+		# 2d matrix to store sufficient stats, parents_total_cardinality x node_cardinality
+		# using 2d array is easier than 1d, because in M step we need to marginalize over the child node 
 		node_suffi_stats = np.zeros((parents_total_card, node_card))
-  		
- 		print node_suffi_stats
 		for i, d in df.iterrows():
-# 	 		if i > 10:
-# 	 			continue
-# 	 		print '-----------------------------'
-# 	 		print d
- 			
 			# when instance d has no missing value
 			if not i in miss_idx: 
 				parents_value = []
@@ -123,21 +134,20 @@ def EM(df, bn_model, miss_node):
 				node_suffi_stats_idx = get_parent_values_idx(parents_card, parents_value)
 				node_val = int(d[node])
 				node_suffi_stats[node_suffi_stats_idx][node_val] += 1.0	
-				print node_suffi_stats
+			# when instance d has missing value
 			else:
 				evidence = {}
 				for n in bn_model.nodes():
 					# including all the variables in the graph except the miss node and its parents
 					if not n in [miss_node]:
 						evidence[n] = int(d[n])
+				# infer the prob of missing value given evidence
 				query_result = infer.query(variables=[miss_node], evidence=evidence)
-				miss_node_factor = query_result[miss_node]
-				miss_node_prob = miss_node_factor.values
-				print miss_node_prob
-				# when miss_node is the child node, we also know the values of its parents, there is one place to update
+				miss_node_prob = query_result[miss_node].values
+				# when miss_node is the child node, we know the values of its parents, there is one place to update
 				if node == miss_node:
 					node_suffi_stats[node_suffi_stats_idx] += miss_node_prob
-				# when miss_node is the parent node, the values of the parent are probablistic, there are multiple places to update
+				# when miss_node is the parent node, the values of the parent are probabilistic, there are multiple places to update
 				else:
 					parents_value_list = []
 					for j, p in enumerate(parents):
@@ -149,79 +159,82 @@ def EM(df, bn_model, miss_node):
 							parents_value_list.append(range(parent_card))
 
 					node_suffi_stats_indices = []
+					# itertools.product generate all the parent values we need to update
 					for parents_value in itertools.product(*parents_value_list):
+						# get the index from parent values
 						node_suffi_stats_idx = get_parent_values_idx(parents_card, list(parents_value))
 						node_suffi_stats_indices.append(node_suffi_stats_idx)
 					node_val = int(d[node])
 					for k, node_suffi_stats_idx in enumerate(node_suffi_stats_indices):
+						# add miss_node prob at each index position
 						node_suffi_stats[node_suffi_stats_idx][node_val] += miss_node_prob[k]
+			#print node_suffi_stats
 						
-				print node_suffi_stats
-						
-						
-		print node_suffi_stats
-	 	print np.sum(node_suffi_stats, axis=1)
-	 	print np.sum(node_suffi_stats)
+		print np.sum(node_suffi_stats, axis=1)
+		affected_nodes_suffi_stats[node] = node_suffi_stats
+		
+	#pprint(affected_nodes_suffi_stats)
+	return affected_nodes_suffi_stats
 	
-	###########################################################################
-	# M_step
-	# update the cpd of the miss node and its children
-# 	row_sum = np.sum(node_suffi_stats, axis=1)
-# 	for i, r in enumerate(node_suffi_stats):
-# 		r/=row_sum[i]
-# 	
-# 	node_cpd = bn_model.get_cpds(node=miss_node)
-# 	node_card = node_cpd.cardinality[0]
-# 	parents = node_cpd.variables[1:]
-# 	parents_card = node_cpd.cardinality[1:]
-# 
-# 	node_cpd_new = TabularCPD(miss_node, node_card, node_suffi_stats.T, parents, parents_card)
-# 	bn_model.add_cpds(node_cpd_new)
-# 	print bn_model.get_cpds(node=miss_node)
-# 	
-# 	for child in bn_model.successors(miss_node):
-# 		child_cpd = bn_model.get_cpds(node=child)
-# 		child_card = child_cpd.cardinality[0]
-# 		child_parents = child_cpd.variables[1:]
-# 		child_parents_card = child_cpd.cardinality[1:]
-# 		
-# 	bn_model.successors(miss_node).keys()
-# 	
-# 	return bn_model
+###########################################################################
+# M_step
+# update the cpd of the affected nodes (miss node and its children), based on sufficient stats
+#
+def M_step(bn_model, affected_nodes_suffi_stats):
+	affected_nodes = affected_nodes_suffi_stats.keys()
+	for node in affected_nodes:
+		node_suffi_stats = affected_nodes_suffi_stats[node]
+		# sum over all values of X
+		row_sum = np.sum(node_suffi_stats, axis=1)
+		for i, r in enumerate(node_suffi_stats):
+			# get cpt of X, theta(x|u) through normalization (dividing the sum of all values of X)
+			r/=row_sum[i]
+		node_cpd = bn_model.get_cpds(node=node)
+		node_card = node_cpd.cardinality[0]
+		parents = node_cpd.variables[1:]
+		parents_card = node_cpd.cardinality[1:]
+		# update cpd with new values
+		node_cpd_new = TabularCPD(node, node_card, node_suffi_stats.T, parents, parents_card)
+		bn_model.add_cpds(node_cpd_new)
+		res = bn_model.get_cpds(node=node)
+		print res
+		print parents
+		print res.values
+
+	return bn_model
 
 
+	
+	
 if __name__ == '__main__':
-	np.random.seed(1)
 	# generate sample data from a given BN
+	np.random.seed(1)
 	N = 500
-	df = sample(N)
-
-	# remove values of a node, generate missing values
-	miss_node = 'G'
-	miss_size = 100
-
-	df = rand_miss(df, miss_node, miss_size)
-	print df.groupby(['D', 'I']).size()
- 	
-	# EM algorithm
-	bn_model = init(df, miss_node)
+	df, bn_generate = sample(N)
 	
-	EM(df, bn_model, miss_node)
 	
-# 	for iter in range(2):
-# 		print '====================================================='
-# 		print iter
-# 		suffi_stats = e_step(df, bn_model, node)
-# 		#pprint(suffi_stats)
-# 		bn_model = m_step(suffi_stats, bn_model, node)
+	for i, d in df.iterrows():
+		if i >=1:
+			continue
+		print d
+		compute_instance_prob(bn_generate, d)
 
+# 	# remove values of a node, generate missing values
+# 	miss_node = 'G'
+# 	miss_size = 10
+# 	df = rand_miss(df, miss_node, miss_size)
+#  
+# 	# EM algorithm
+# 	max_iter = 1
+# 	#loglik = float('-inf')
+# 	bn_model = init(df, miss_node)
+# 	for iter in range(max_iter):
+# 		print "Iteration: " + str(iter)
+# 		suffi_stats_dict = E_step(df, bn_model, miss_node)
+# 		bn_model = M_step(bn_model, suffi_stats_dict)
 
-	#e_step(df, bn_model, miss_node)
 	
-	#pd.to_numeric(df['G'], errors='coerce',downcast='integer')
-	#print df['G']
-# 	for i, d in df.iterrows():
-# 		print d
+
 	
 
 
