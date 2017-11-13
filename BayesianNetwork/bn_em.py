@@ -95,7 +95,23 @@ def compute_instance_prob(bn_model, instance, topo_order):
 	#print instance_prob
 	return instance_prob
 			
-	
+def compute_loglik(df, bn_model, miss_node):
+	miss_idx = df[df[miss_node].isnull()].index.tolist()
+	topo_order = ['D', 'I', 'G', 'E', 'L']
+	loglik = 0.0
+	for i, d in df.iterrows():
+		instance_prob = 0.0
+		if i in miss_idx:
+			node_card = bn_model.get_cardinality(miss_node)
+			for node_val in range(node_card):
+				d_copy = copy.deepcopy(d)
+				d_copy[miss_node] = node_val
+				instance_prob += compute_instance_prob(bn_model, d_copy, topo_order)		
+		else:
+			instance_prob = compute_instance_prob(bn_model, d, topo_order)
+		#print instance_prob
+		loglik += np.log(instance_prob)
+	return loglik
 
 ###########################################################################
 # E_step
@@ -146,6 +162,11 @@ def E_step(df, bn_model, miss_node):
 				miss_node_prob = query_result[miss_node].values
 				# when miss_node is the child node, we know the values of its parents, there is one place to update
 				if node == miss_node:
+					parents_value = []
+					for p in parents:
+						val = int(d[p])
+						parents_value.append(val)
+					node_suffi_stats_idx = get_parent_values_idx(parents_card, parents_value)
 					node_suffi_stats[node_suffi_stats_idx] += miss_node_prob
 				# when miss_node is the parent node, the values of the parent are probabilistic, there are multiple places to update
 				else:
@@ -170,7 +191,7 @@ def E_step(df, bn_model, miss_node):
 						node_suffi_stats[node_suffi_stats_idx][node_val] += miss_node_prob[k]
 			#print node_suffi_stats
 						
-		print np.sum(node_suffi_stats, axis=1)
+		#print np.sum(node_suffi_stats, axis=1)
 		affected_nodes_suffi_stats[node] = node_suffi_stats
 		
 	#pprint(affected_nodes_suffi_stats)
@@ -196,10 +217,7 @@ def M_step(bn_model, affected_nodes_suffi_stats):
 		# update cpd with new values
 		node_cpd_new = TabularCPD(node, node_card, node_suffi_stats.T, parents, parents_card)
 		bn_model.add_cpds(node_cpd_new)
-		res = bn_model.get_cpds(node=node)
-		print res
-		print parents
-		print res.values
+		print bn_model.get_cpds(node=node)
 
 	return bn_model
 
@@ -211,27 +229,33 @@ if __name__ == '__main__':
 	np.random.seed(1)
 	N = 500
 	df, bn_generate = sample(N)
+	cpd_l = bn_generate.get_cpds('L')
+	print cpd_l
+	print cpd_l.reorder_parents(new_order=['E', 'G'])
+	print bn_generate.get_cpds('G')
 	
-	
-	for i, d in df.iterrows():
-		if i >=1:
-			continue
-		print d
-		compute_instance_prob(bn_generate, d)
 
-# 	# remove values of a node, generate missing values
-# 	miss_node = 'G'
-# 	miss_size = 10
-# 	df = rand_miss(df, miss_node, miss_size)
-#  
-# 	# EM algorithm
-# 	max_iter = 1
-# 	#loglik = float('-inf')
-# 	bn_model = init(df, miss_node)
-# 	for iter in range(max_iter):
-# 		print "Iteration: " + str(iter)
-# 		suffi_stats_dict = E_step(df, bn_model, miss_node)
-# 		bn_model = M_step(bn_model, suffi_stats_dict)
+# 	p = compute_loglik(df, bn_generate, miss_node)
+# 	print p
+
+	# remove values of a node, generate missing values
+	miss_node = 'G'
+	miss_size = 500
+	df = rand_miss(df, miss_node, miss_size)
+
+	# EM algorithm
+	max_iter = 100
+	bn_model = init(df, miss_node)
+# 	p = compute_loglik(df, bn_model, miss_node)
+# 	print p
+	
+	for iter in range(max_iter):
+		print '------------------------------------------------------'
+		print "Iteration: " + str(iter)
+		suffi_stats_dict = E_step(df, bn_model, miss_node)
+		bn_model = M_step(bn_model, suffi_stats_dict)
+		loglik = compute_loglik(df, bn_model, miss_node)
+		print "loglik: " + str(loglik)
 
 	
 
