@@ -229,33 +229,38 @@ if __name__ == '__main__':
 	np.random.seed(1)
 	N = 500
 	df, bn_generate = sample(N)
-	cpd_l = bn_generate.get_cpds('L')
-	print cpd_l
-	print cpd_l.reorder_parents(new_order=['E', 'G'])
-	print bn_generate.get_cpds('G')
+	print df
 	
+	df['D'].replace({1:'hard', 0:'easy'}, inplace=True)
+	print df
+	bn_model = BayesianModel([('D', 'G'), ('I', 'G'), ('E', 'L'), ('G', 'L')])
+	bn_model.fit(df, estimator=MaximumLikelihoodEstimator)
+	for cpd in bn_model.get_cpds():
+		print("CPD of {variable}:".format(variable=cpd.variable))
+		print(cpd)
+# 	cpd_l = bn_generate.get_cpds('L')
+# 	print cpd_l
+# 	print cpd_l.reorder_parents(new_order=['E', 'G'])
+# 	print bn_generate.get_cpds('G')
 
-# 	p = compute_loglik(df, bn_generate, miss_node)
-# 	print p
-
-	# remove values of a node, generate missing values
-	miss_node = 'G'
-	miss_size = 500
-	df = rand_miss(df, miss_node, miss_size)
-
-	# EM algorithm
-	max_iter = 100
-	bn_model = init(df, miss_node)
-# 	p = compute_loglik(df, bn_model, miss_node)
-# 	print p
-	
-	for iter in range(max_iter):
-		print '------------------------------------------------------'
-		print "Iteration: " + str(iter)
-		suffi_stats_dict = E_step(df, bn_model, miss_node)
-		bn_model = M_step(bn_model, suffi_stats_dict)
-		loglik = compute_loglik(df, bn_model, miss_node)
-		print "loglik: " + str(loglik)
+# 	# remove values of a node, generate missing values
+# 	miss_node = 'G'
+# 	miss_size = 500
+# 	df = rand_miss(df, miss_node, miss_size)
+# 
+# 	# EM algorithm
+# 	max_iter = 200
+# 	bn_model = init(df, miss_node)
+# # 	p = compute_loglik(df, bn_model, miss_node)
+# # 	print p
+# 	
+# 	for iter in range(max_iter):
+# 		print '------------------------------------------------------'
+# 		print "Iteration: " + str(iter)
+# 		suffi_stats_dict = E_step(df, bn_model, miss_node)
+# 		bn_model = M_step(bn_model, suffi_stats_dict)
+# 		loglik = compute_loglik(df, bn_model, miss_node)
+# 		print "loglik: " + str(loglik)
 
 	
 
