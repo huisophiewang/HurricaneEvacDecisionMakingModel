@@ -42,15 +42,7 @@ evac_ability_items = ['Having young children', 'Having elderly family member(s)'
 evac_notice_how_items = ['Radio or TV', 'Social media or internet', 'Word of mouth (friends/relative/neighbor)',
                          'Police/authorities came into the neighborhood', 'Text alerts or phone calls from officials', 'Other']
 
-risk_cols = []
-risk_cols.extend(rename_demo.values())
-risk_cols.extend(rename_house.values())
-risk_cols.extend(rename_loc.values())
-risk_cols.extend(rename_info_tv.values())
-risk_cols.extend(rename_info_social.values())
-risk_cols.extend(rename_info_other.values())
-risk_cols.extend(rename_risk.values())
-print risk_cols
+
 
 
 def prep(fp):
@@ -69,7 +61,6 @@ def prep(fp):
     rename_all.update(rename_evac_notice)
     rename_all.update(rename_evac_decision)
     
-    cols = rename_all.values()
     df.rename(columns=rename_all, inplace=True)
     
     #df.fillna(0, inplace=True)
@@ -78,8 +69,8 @@ def prep(fp):
     df['race'].replace({"Caucasian":1, "African American":2, "Asian":3, "Hispanic":4, "American Indian":5, "Other":0}, inplace=True)
     df_race = pd.get_dummies(df['race'], drop_first=True)
     df_race.rename(columns={1:'r_white', 2:'r_black', 3:'r_asian', 4:'r_hispanic', 5:'r_native'}, inplace=True)
-    df['edu'].replace({'Some high school':0, 'High school graduate':1, 'Some college':2, 'College graduate':3, 'Graduate School':4}, inplace=True)
-    df['income'].replace({'Less than $15,000':0, '$15,000 to $25,000':1, '$25,000 to $40,000':2, '$40,000 to $80,000':3, 'over $80,000':4}, inplace=True)
+    df['edu'].replace({'Some high school':0, 'High school graduate':1, 'Some college':2, 'College graduate':3, 'Graduate school':4}, inplace=True)
+    df['income'].replace({'Less than $15,000':0, '$15,000 to $25,000':1, '$25,000 to $40,000':2, '$40,000 to $80,000':3, 'Over $80,000':4}, inplace=True)
     df['has_children'].replace(yesno_to_num, inplace=True)
     df['has_elders'].replace(yesno_to_num, inplace=True)
     df['has_special_needs'].replace(yesno_to_num, inplace=True)
@@ -89,13 +80,13 @@ def prep(fp):
                                 'Condo/apartment - 4 stories or less':2, 'Condo/apartment - more than 4 floors':2, 
                                 'Mobile or manufactured home':3, 'Other':0}, inplace=True)
     df_house_struct = pd.get_dummies(df['house_struct'], drop_first=True)
-    df_house_struct.rename(columns={1:'hs_single_fam', 2:'hs_condo', 3:'hs_mobile'})
+    df_house_struct.rename(columns={1:'hs_single_fam', 2:'hs_condo', 3:'hs_mobile'}, inplace=True)
     df['house_material'].replace({'Wood':1, 'Brick or block':2, 'Other':0}, inplace=True)
     df_house_material = pd.get_dummies(df['house_material'], drop_first=True)
-    df_house_material.rename(columns={1:'hm_wood', 2:'hm_brick'})
+    df_house_material.rename(columns={1:'hm_wood', 2:'hm_brick'}, inplace=True)
     df['owner'].replace({'Own':1, 'Rent':0}, inplace=True)
     df['insurance'].replace(yesno_to_num, inplace=True)
-    df['coast_dist'].replace({'With 1 mile':0, '1 to 10 mile':1, '10 to 30 miles':2,
+    df['coast_dist'].replace({'Within 1 mile':0, '1 to 10 mile':1, '10 to 30 miles':2,
                               '30 to 50 miles':3, '50 to 70 miles':4, 'More than 70 miles':5}, inplace=True)
     
     df['info_tv'].replace(yesno_to_num, inplace=True)
@@ -160,8 +151,31 @@ def prep(fp):
 #         print i
 #         items = re.split(regex_comma_outside_parentheses, d['evac_ability'])
 #         pprint(items)
+
+    df = pd.concat([df, df_race, df_house_struct, df_house_material], axis=1)
+
+    risk_cols = ['age', 'gender','edu','income','househd_size']
+    risk_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
+    risk_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
+    risk_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
+    risk_cols.extend(['hm_wood', 'hm_brick'])
+    risk_cols.extend(['owner', 'insurance', 'coast_dist'])
+    risk_cols.extend(rename_info_tv.values())
+    risk_cols.extend(rename_info_social.values())
+    risk_cols.extend(rename_info_other.values())
+    risk_cols.extend(rename_risk.values())
+    print risk_cols
+    
+    for col in risk_cols:
+        print col
+        print df[col].unique()     
+        print df[col].value_counts(dropna=False)
         
     
+
+#     
+    df1 = df[risk_cols]
+    df1.to_csv('MTurk_Harvey_risk.csv', columns=risk_cols, index=False)
 
 
     
@@ -170,4 +184,10 @@ if __name__ == '__main__':
     prep(fp)
 
     #pprint(items)
+#     fp = 'MTurk_Harvey_risk.csv'
+#     df = pd.read_csv(fp)
+#     for col in df.columns:
+#         print col
+#         print df[col].unique()     
+#         print df[col].value_counts(dropna=False)
     
