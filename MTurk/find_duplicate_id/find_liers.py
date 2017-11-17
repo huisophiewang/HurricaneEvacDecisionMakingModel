@@ -1,33 +1,21 @@
 import pandas as pd
 
 """
-It seems to be the second time you answer this survey. We require each worker to answer at most once.
+It seems to be the second time you answered this survey. We require each worker to answer at most once.
 """
 
-mturk = pd.read_csv("Batch_2993240_batch_results.csv")
+mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\batch5_100samples\Batch_3008404_batch_results.csv'
+mturk = pd.read_csv(mturk_fp)
 ids_m = set(mturk['WorkerId'])
+print len(ids_m)
 
 
-qualtrics_recorded = pd.read_csv("Hurricane_Evacuation_Questionnaire_Recorded.csv")
-qualtrics_in_progress = pd.read_csv("Hurricane_Evacuation_Questionnaire_InProgress.csv")
+qualtrics_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\batch5_100samples\qualtrics_duplicate_ids.xlsx'
+qualtrics = pd.read_excel(qualtrics_fp)
+ids_q = set(qualtrics['Q38'])
 
-ids_q1 = set(qualtrics_recorded['Q38'][2:])
-print len(ids_q1)
-print len(set(ids_q1))
 
-suspects = []
 for id in ids_m:
-    if not id in ids_q1:
-        #print id
-        suspects.append(id)
-        
-print len(suspects)
+    if id in ids_q:
+        print id
 
-confirmed_suspects = []
-ids_q2 = set(qualtrics_in_progress['V78'][1:])
-for i in suspects:
-    if i in ids_q2:
-        #print i
-        confirmed_suspects.append(i)
-        
-print len(confirmed_suspects)
