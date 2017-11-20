@@ -6,8 +6,8 @@ import pandas as pd
 from scipy import stats
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
-    clf = linear_model.LogisticRegression(C=lam, penalty='l1')
-    #clf = svm.SVC(C=lam, kernel='poly')
+    #clf = linear_model.LogisticRegression(C=lam, penalty='l1')
+    clf = svm.SVC(C=lam, kernel='linear')
     
     clf.fit(x_train, y_train)
     predict = clf.predict(x_test)
@@ -15,7 +15,7 @@ def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     #print acc
     return acc
 
-def cross_validate(x, y, fold):
+def cross_validate(x, y, fold=10):
     lam_range = np.arange(0.01, 1.5, 0.01)
     lam_accs = []
     for lam in lam_range:
@@ -38,14 +38,15 @@ def cross_validate(x, y, fold):
     print "best lambda: %f" % best_lam
     return best_lam
 
-def corr_test(df):
+def corr_test(df, y_col):
     
-    y = df['risk_stay'] - df['risk_evac']
     for col in df.columns:
-        print col
+        #print col
         #print df[col].unique()
-        r, p = stats.pearsonr(df[col],y)
+        r, p = stats.pearsonr(df[col], df[y_col])
         if p < 0.05:
+            print
+            print col
             print r, p
         
 def scatter_plot(df, var_x):
@@ -56,20 +57,20 @@ def scatter_plot(df, var_x):
     plt.ylabel('risk')
     plt.show()
 
+def hist_plot(df, var):
+    x = df[var]
+    plt.hist(x)
+    plt.show()
+    
 if __name__ == '__main__':
-    fp = 'MTurk_Harvey_risk.csv'
+    fp = 'MTurk_Harvey.csv'
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
-#     x = data[:,:-6]
-#     risk_stay = data[:,-6]
-#     risk_evac = data[:,-5]
-#     print risk_evac
-#     y = risk_stay - risk_evac
-#     print y
-#     plt.hist(y, bins=9)
-#     plt.show()
 
-    corr_test(df)
-    scatter_plot(df, 'info_tv_leave')
+    corr_test(df, 'evac_decision')
+    
+    x = data[:, :-1]
+    y = data[:,-1]
+    cross_validate(x, y)
     
     

@@ -26,10 +26,10 @@ rename_info_other = OrderedDict([('Q8', 'friends_suggest'), ('Q9', 'neighbors_do
 rename_risk = OrderedDict([('Q3_1','risk_stay'), ('Q3_2', 'risk_evac'), 
                            ('Q3_3', 'wind_safety'), ('Q3_4', 'wind_property'), 
                            ('Q3_5', 'flood_safety'), ('Q3_6', 'flood_property')])
-rename_evac_ability = OrderedDict([('Q10', 'evac_ability')])
+rename_evac_ability = OrderedDict([('Q10', 'evac_ability_items')])
 
 rename_emer_service = OrderedDict([('Q36_1','emer_serv_before'), ('Q36_2', 'emer_serv_during'),('Q36_3', 'emer_serv_after')])
-rename_evac_notice = OrderedDict([('Q28', 'evac_notice'), ('Q29', 'evac_notice_type'), ('Q30', 'evac_notice_how'), ('Q31', 'evac_notice_when'), ('Q32', 'evac_notice_stay')])
+rename_evac_notice = OrderedDict([('Q28', 'evac_notice'), ('Q29', 'evac_notice_type'), ('Q30', 'evac_notice_how'), ('Q31', 'evac_notice_when'), ('Q32', 'stay_notice')])
 rename_evac_decision = OrderedDict([('Q33', 'evac_decision'), ('Q34', 'evac_date'), ('Q35', 'evac_time'), ('Q37', 'same_choice')])
 
 amount_to_num = {'None at all':1, 'A little':2, 'A moderate amount':3, 'A lot':4, 'A great deal':5}
@@ -120,22 +120,41 @@ def prep(fp):
     df['flood_safety'].replace(amount_to_num, inplace=True)
     df['flood_property'].replace(amount_to_num, inplace=True)
     
-    
-    #df['evac_ability'][df['evac_ability'] == 'None']
     df['evac_notice'].replace({'Yes':1, 'No':2}, inplace=True)
+    df['evac_notice'].fillna(0, inplace=True)
+    df_evac_notice = pd.get_dummies(df['evac_notice'], drop_first=True)
+    df_evac_notice.rename(columns={1:'received_evac_notice', 2:'no_evac_notice'}, inplace=True)
+    
     df['evac_notice_type'].replace({'Mandatory (must)':1, 'Voluntary (should)':2}, inplace=True)
+    df['evac_notice_type'].fillna(0, inplace=True)
+    df_evac_notice_type = pd.get_dummies(df['evac_notice_type'], drop_first=True)
+    df_evac_notice_type.rename(columns={1:'received_mandatory', 2:'received_voluntary'}, inplace=True)
+    
+    
     #df['evac_notice_how'].replace()
     df['evac_notice_when'].replace({'August 23th (Wednesday)':1, 'August 24th (Thursday)':1, 'August 25th (Friday, 1st landfall near Rockport, TX)':1,
                                     'August 26th (Saturday, weakened to Tropical Storm)':2, 'August 27th (Sunday)':2, 'August 28th (Monday)':2,
                                     'August 29th (Tuesday)':2, 'August 30th (Wednesday, last landfall at Cameron, LA, weakened to Tropical Depression':2,
                                     'August 31th (Thursday)':2, 'September 1st (Friday)':2, 'September 2nd (Saturday)':2, 'September 3rd (Sunday)':2}, inplace=True)
+    df['evac_notice_when'].fillna(0, inplace=True)
+    df_evac_notice_when = pd.get_dummies(df['evac_notice_when'], drop_first=True)
+    df_evac_notice_when.rename(columns={1:'evac_notice_before_landfall', 2:'evac_notice_after_landfall'}, inplace=True)
     
-    df['evac_notice_stay'].replace({'Yes':1, 'No':2}, inplace=True)
+    df['stay_notice'].replace({'Yes':1, 'No':2}, inplace=True)
+    df['stay_notice'].fillna(0, inplace=True)
+    df_stay_notice = pd.get_dummies(df['stay_notice'], drop_first=True)
+    df_stay_notice.rename(columns={1:'received_stay_notice', 2:'no_stay_notice'}, inplace=True)
+    
+    
     df['evac_decision'].replace(yesno_to_num, inplace=True)
     df['evac_date'].replace({'August 23th (Wednesday)':1, 'August 24th (Thursday)':1, 'August 25th (Friday, 1st landfall near Rockport, TX)':1,
                             'August 26th (Saturday, weakened to Tropical Storm)':2, 'August 27th (Sunday)':2, 'August 28th (Monday)':2,
                             'August 29th (Tuesday)':2, 'August 30th (Wednesday, last landfall at Cameron, LA, weakened to Tropical Depression':2,
                             'August 31th (Thursday)':2, 'September 1st (Friday)':2, 'September 2nd (Saturday)':2, 'September 3rd (Sunday)':2}, inplace=True)
+    df['evac_date'].fillna(0, inplace=True)
+    df_evac_date = pd.get_dummies(df['evac_date'], drop_first=True)
+    df_evac_date.rename(columns={1:'evac_before_landfall', 2:'evac_after_landfall'}, inplace=True)
+    
     
     df['evac_time'].replace({'Morning':1, 'Afternoon':2, 'Evening':3, 'Night':4}, inplace=True)
     df['emer_serv_before'].replace(yesno_to_num, inplace=True)
@@ -144,38 +163,41 @@ def prep(fp):
     df['same_choice'].replace(yesno_to_num, inplace=True)
     
 
-#     print df['evac_ability'].unique()
-#     print df['evac_ability'].value_counts(dropna=False)
-#     for i, d in df.iterrows():
-#         print '---------------------'
-#         print i
-#         items = re.split(regex_comma_outside_parentheses, d['evac_ability'])
-#         pprint(items)
+    for i, d in df.iterrows():
+        items = re.split(regex_comma_outside_parentheses, d['evac_ability_items'])
+        #pprint(items)
+        if 'None' in items:
+            df.set_value(i, 'evac_ability', 1)
+        else:
+            df.set_value(i, 'evac_ability', 0)
 
-    df = pd.concat([df, df_race, df_house_struct, df_house_material], axis=1)
+    df = pd.concat([df, df_race, df_house_struct, df_house_material, 
+                    df_evac_notice, df_evac_notice_type, df_evac_notice_when, df_stay_notice, df_evac_date], axis=1)
 
-    risk_cols = ['age', 'gender','edu','income','househd_size']
-    risk_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
-    risk_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
-    risk_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
-    risk_cols.extend(['hm_wood', 'hm_brick'])
-    risk_cols.extend(['owner', 'insurance', 'coast_dist'])
-    risk_cols.extend(rename_info_tv.values())
-    risk_cols.extend(rename_info_social.values())
-    risk_cols.extend(rename_info_other.values())
-    risk_cols.extend(rename_risk.values())
-    print risk_cols
+    all_cols = ['age', 'gender','edu','income','househd_size']
+    all_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
+    all_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
+    all_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
+    all_cols.extend(['hm_wood', 'hm_brick'])
+    all_cols.extend(['owner', 'insurance', 'coast_dist'])
+    all_cols.extend(rename_info_tv.values())
+    all_cols.extend(rename_info_social.values())
+    all_cols.extend(rename_info_other.values())
+    all_cols.extend(rename_risk.values())
+    all_cols.extend(['evac_ability'])
+    all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])
+    all_cols.extend(['evac_notice_before_landfall', 'evac_notice_after_landfall'])
+    all_cols.extend(['evac_decision'])
     
-    for col in risk_cols:
+    #print all_cols 
+    for col in all_cols:
         print col
         print df[col].unique()     
         print df[col].value_counts(dropna=False)
         
-    
-
-#     
-    df1 = df[risk_cols]
-    df1.to_csv('MTurk_Harvey_risk.csv', columns=risk_cols, index=False)
+      
+    df1 = df[all_cols]
+    df1.to_csv('MTurk_Harvey.csv', columns=all_cols, index=False)
 
 
     
