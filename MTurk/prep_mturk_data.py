@@ -45,8 +45,8 @@ evac_notice_how_items = ['Radio or TV', 'Social media or internet', 'Word of mou
 
 
 
-def prep(fp):
-    df = pd.read_csv(fp)
+def prep(input_fp, output_fp):
+    df = pd.read_csv(input_fp)
     
     rename_all = OrderedDict()
     rename_all.update(rename_demo)
@@ -174,17 +174,18 @@ def prep(fp):
     df = pd.concat([df, df_race, df_house_struct, df_house_material, 
                     df_evac_notice, df_evac_notice_type, df_evac_notice_when, df_stay_notice, df_evac_date], axis=1)
 
-    all_cols = ['age', 'gender','edu','income','househd_size']
-    all_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
-    all_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
-    all_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
-    all_cols.extend(['hm_wood', 'hm_brick'])
-    all_cols.extend(['owner', 'insurance', 'coast_dist'])
+    all_cols = []
+#     all_cols.extend(['age', 'gender','edu','income','househd_size'])
+#     all_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
+#     all_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
+#     all_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
+#     all_cols.extend(['hm_wood', 'hm_brick'])
+#     all_cols.extend(['owner', 'insurance', 'coast_dist'])
     all_cols.extend(rename_info_tv.values())
     all_cols.extend(rename_info_social.values())
     all_cols.extend(rename_info_other.values())
-    all_cols.extend(rename_risk.values())
-    all_cols.extend(['evac_ability'])
+    #all_cols.extend(rename_risk.values())
+    #all_cols.extend(['evac_ability'])
     all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])
     all_cols.extend(['evac_notice_before_landfall', 'evac_notice_after_landfall'])
     all_cols.extend(['evac_decision'])
@@ -197,13 +198,20 @@ def prep(fp):
         
       
     df1 = df[all_cols]
-    df1.to_csv('MTurk_Harvey.csv', columns=all_cols, index=False)
+    df1.to_csv(output_fp, columns=all_cols, index=False)
 
 
     
 if __name__ == '__main__':
-    fp = "Hurricane_Evacuation_Questionnaire.csv"
-    prep(fp)
+    input_fp = "data\Hurricane_Evacuation_Questionnaire.csv"
+    output_fp = 'data\MTurk_Harvey_no_hidden_vars.csv'
+    output_fp = 'data\MTurk_Harvey_basic_add_info.csv'
+    output_fp = 'data\MTurk_Harvey_basic_add_notice.csv'
+    output_fp = 'data\MTurk_Harvey_basic_add_risk.csv'
+    output_fp = 'data\MTurk_Harvey_notice.csv'
+    output_fp = 'data\MTurk_Harvey_risk.csv'
+    output_fp = 'data\MTurk_Harvey_info_notice.csv'
+    prep(input_fp, output_fp)
 
     #pprint(items)
 #     fp = 'MTurk_Harvey_risk.csv'
