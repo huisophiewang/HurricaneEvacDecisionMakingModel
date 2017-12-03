@@ -4,6 +4,7 @@ from collections import OrderedDict
 from scipy import stats
 import matplotlib.pyplot as plt
 import re
+import os
 from pprint import pprint
 
 regex_comma_outside_parentheses = r',\s*(?![^()]*\))'
@@ -175,17 +176,17 @@ def prep(input_fp, output_fp):
                     df_evac_notice, df_evac_notice_type, df_evac_notice_when, df_stay_notice, df_evac_date], axis=1)
 
     all_cols = []
-#     all_cols.extend(['age', 'gender','edu','income','househd_size'])
-#     all_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
-#     all_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
-#     all_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
-#     all_cols.extend(['hm_wood', 'hm_brick'])
-#     all_cols.extend(['owner', 'insurance', 'coast_dist'])
+    all_cols.extend(['age', 'gender','edu','income','househd_size'])
+    all_cols.extend(['r_white', 'r_black', 'r_asian', 'r_hispanic', 'r_native'])
+    all_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
+    all_cols.extend(['hs_single_fam', 'hs_condo', 'hs_mobile'])
+    all_cols.extend(['hm_wood', 'hm_brick'])
+    all_cols.extend(['owner', 'insurance', 'coast_dist'])
     all_cols.extend(rename_info_tv.values())
     all_cols.extend(rename_info_social.values())
     all_cols.extend(rename_info_other.values())
-    #all_cols.extend(rename_risk.values())
-    #all_cols.extend(['evac_ability'])
+    all_cols.extend(rename_risk.values())
+    all_cols.extend(['evac_ability'])
     all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])
     all_cols.extend(['evac_notice_before_landfall', 'evac_notice_after_landfall'])
     all_cols.extend(['evac_decision'])
@@ -203,7 +204,7 @@ def prep(input_fp, output_fp):
 
     
 if __name__ == '__main__':
-    input_fp = "data\Hurricane_Evacuation_Questionnaire.csv"
+    input_fp = os.path.join('data', 'Hurricane_Evacuation_Questionnaire.csv')
     output_fp = 'data\MTurk_Harvey_no_hidden_vars.csv'
     output_fp = 'data\MTurk_Harvey_basic_add_info.csv'
     output_fp = 'data\MTurk_Harvey_basic_add_notice.csv'
@@ -211,6 +212,7 @@ if __name__ == '__main__':
     output_fp = 'data\MTurk_Harvey_notice.csv'
     output_fp = 'data\MTurk_Harvey_risk.csv'
     output_fp = 'data\MTurk_Harvey_info_notice.csv'
+    output_fp = os.path.join('data', 'MTurk_Harvey.csv')
     prep(input_fp, output_fp)
 
     #pprint(items)

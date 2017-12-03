@@ -6,8 +6,7 @@ import pandas as pd
 #http://boto3.readthedocs.io/en/latest/reference/services/mturk.html
 
 region_name = 'us-east-1'
-aws_access_key_id = r'AKIAINV5NDNWXQT55NRA'
-aws_secret_access_key = r'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'
+
 
 endpoint_url_sandbox = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
 endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'

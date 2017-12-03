@@ -5,11 +5,12 @@ from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.metrics import f1_score
 from pprint import pprint
 import operator
+import os
 
 
 def nested_cv(x, y, features):
     feature_count = {}
-    outer_cv = StratifiedKFold(n_splits=10, shuffle=False, random_state=0)
+    outer_cv = StratifiedKFold(n_splits=10, shuffle=True)
     scores = []
     for fold, (train_idx, test_idx) in enumerate(outer_cv.split(x, y)):
         print fold
@@ -17,7 +18,7 @@ def nested_cv(x, y, features):
         x_train, x_test = x[train_idx], x[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
         # inner cv, tune hyper parameters
-        inner_cv = StratifiedKFold(n_splits=10, shuffle=False, random_state=0)
+        inner_cv = StratifiedKFold(n_splits=10, shuffle=True)
         inner_cv.split(x_train, y_train)
         search_param = GridSearchCV(estimator=LogisticRegression(penalty='l1'), 
                                     param_grid={'C': np.arange(0.01, 1.5, 0.01)}, 
@@ -44,6 +45,11 @@ def nested_cv(x, y, features):
     avg_score = np.mean(scores)
     print "avg f1 score: %f" % avg_score
     
+
+    for feature in feature_count:
+        if feature_count[feature][0] >=8:
+            print feature
+            
     sorted_count = sorted(feature_count.items(), key=lambda x: x[1][0], reverse=True)
     pprint(sorted_count)
     
@@ -51,7 +57,7 @@ def nested_cv(x, y, features):
 
 
 if __name__ == '__main__':
-    fp = 'data\MTurk_Harvey.csv'
+    fp = os.path.join('data', 'MTurk_Harvey.csv')
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
    
