@@ -7,18 +7,21 @@ from scipy import stats
 from sklearn.metrics import f1_score
 from pprint import pprint
 
-# F1-score
-# baseline: 0.745
-# demo + house: 0.748
-# demo + house + risk: 0.761
-# demo + house + notice: 0.785
-# demo + house + info: 0.828
-# risk: 0.754
-# notice: 0.807
-# info: 0.835
-# notice + info: 0.832
-# all: 0.819
 
+
+# full data
+# F1-score
+# baseline: 0.752
+# demo + house: 0.762
+# risk: 0.754
+# notice: 0.815
+# info: 0.852
+# info + notice: 0.844
+# all: 0.842
+
+# predict risk_stay
+# F1-score
+# baseline: 0.5238
 
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     clf = linear_model.LogisticRegression(C=lam, penalty='l1')
@@ -90,28 +93,28 @@ def hist_plot(df, var):
     plt.show()
     
 if __name__ == '__main__':
-    fp = 'data\MTurk_Harvey.csv'
-    #fp = 'data\MTurk_Harvey_no_hidden_vars.csv'
-    #fp = 'data\MTurk_Harvey_basic.csv'
-    #fp = 'data\MTurk_Harvey_basic_add_info.csv'
-    #fp = 'data\MTurk_Harvey_basic_add_notice.csv'
-    #fp = 'data\MTurk_Harvey_basic_add_risk.csv'
-#     fp = 'data\MTurk_Harvey_info.csv'
-#     fp = 'data\MTurk_Harvey_notice.csv'
+    fp = 'data\MTurk_Harvey_predict_risk_stay.csv'
+    fp = 'data\MTurk_Harvey_predict_risk_evac.csv'
+#     fp = 'data\MTurk_Harvey_basic.csv'
 #     fp = 'data\MTurk_Harvey_risk.csv'
-#     fp = 'data\MTurk_Harvey_info_notice.csv'
+#     fp = 'data\MTurk_Harvey_notice.csv'
+#     fp = 'data\MTurk_Harvey_info.csv'
+    #fp = 'data\MTurk_Harvey_info_notice.csv'
     
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
 
-    corr_test(df, 'evac_decision')
+    #corr_test(df, 'evac_decision')
     
-#     x = data[:, :-1]
-#     y = data[:,-1]
+    x = data[:, :-1]
+    y = data[:,-1]
+     
+    baseline_acc = 1.0 - sum(y)/float(len(y))
+    print len(y)
+    print sum(y)
+    print 'accuracy baseline: %f' % baseline_acc
 #     
-#     baseline_acc = 1.0 - sum(y)/float(len(y))
-#     print 'accuracy baseline: %f' % baseline_acc
-#     
-#     cross_validate(x, y)
+
+    cross_validate(x, y)
     
     
