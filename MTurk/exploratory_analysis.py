@@ -23,6 +23,10 @@ from pprint import pprint
 # F1-score
 # baseline: 0.5238
 
+# predict risk_stay
+# F1-score
+# baseline: 0.6163
+
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     clf = linear_model.LogisticRegression(C=lam, penalty='l1')
     #clf = svm.SVC(C=lam, kernel='linear')
@@ -31,7 +35,7 @@ def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     predict = clf.predict(x_test)
     acc = np.sum(predict == y_test).astype(int) / float(len(y_test))
     
-    #predict = np.zeros(len(y_test))
+    predict = np.zeros(len(y_test))
     f_score = f1_score(y_test, predict, pos_label=1, average='micro')
     #print y_test
     #print predict
