@@ -36,9 +36,14 @@ rename_evac_decision = OrderedDict([('Q33', 'evac_decision'), ('Q34', 'evac_date
 amount_to_num = {'None at all':1, 'A little':2, 'A moderate amount':3, 'A lot':4, 'A great deal':5}
 yesno_to_num = {'Yes':1, 'No':0}
 
-evac_ability_items = ['Having young children', 'Having elderly family member(s)', 'Having family member(s) with special needs', 'Having pets',
-                      'Evacuation expense (travel, lodging, etc.)', 'No transportation (cars, flights, public transportation, etc)', 
-                      "No place to go (hotels, public shelters, friends' or family's places, etc.)", 'Job obligations']
+evac_ability_items = {'Having young children':'ability_children', 
+                      'Having elderly family member(s)':'ability_elders', 
+                      'Having family member(s) with special needs':'ability_special_needs', 
+                      'Having pets':'ability_pets',
+                      'Evacuation expense (travel, lodging, etc.)':'ability_expense', 
+                      'No transportation (cars, flights, public transportation, etc)':'ability_no_transport', 
+                      "No place to go (hotels, public shelters, friends' or family's places, etc.)":'ability_no_place', 
+                      'Job obligations':'ability_job'}
 
 evac_notice_how_items = ['Radio or TV', 'Social media or internet', 'Word of mouth (friends/relative/neighbor)',
                          'Police/authorities came into the neighborhood', 'Text alerts or phone calls from officials', 'Other']
@@ -163,14 +168,22 @@ def prep(input_fp, output_fp):
     df['emer_serv_after'].replace(yesno_to_num, inplace=True)
     df['same_choice'].replace(yesno_to_num, inplace=True)
     
+    for item in evac_ability_items.values():
+        df[item] = 0
 
     for i, d in df.iterrows():
         items = re.split(regex_comma_outside_parentheses, d['evac_ability_items'])
-        #pprint(items)
-        if 'None' in items:
-            df.set_value(i, 'evac_ability', 1)
-        else:
-            df.set_value(i, 'evac_ability', 0)
+        
+#         if 'None' in items:
+#             df.set_value(i, 'evac_ability', 1)
+#         else:
+#             df.set_value(i, 'evac_ability', 0)
+
+        for item in items:
+            if item != 'None':
+                df.set_value(i, evac_ability_items[item], 1)
+                
+            
     
     df = pd.concat([df, df_race, df_house_struct, df_house_material, 
                     df_evac_notice, df_evac_notice_type, df_evac_notice_when, df_stay_notice, df_evac_date], axis=1)
@@ -193,23 +206,24 @@ def prep(input_fp, output_fp):
 #     print df['risk_stay']
 #     all_cols.extend(['risk_stay'])
 
-    df['risk_evac'] = df['risk_evac'].map({1:0, 2:0, 3:0, 4:1, 5:1})
-    print df['risk_evac']
-    all_cols.extend(['risk_evac'])
+#     df['risk_evac'] = df['risk_evac'].map({1:0, 2:0, 3:0, 4:1, 5:1})
+#     print df['risk_evac']
+#     all_cols.extend(['risk_evac'])
     
-#     all_cols.extend(rename_risk.values())
-#     all_cols.extend(['evac_ability'])
-#     all_cols.extend(['evac_decision'])
-#     all_cols.extend(['emer_serv_before', 'emer_serv_during', 'emer_serv_after'])
+    all_cols.extend(rename_risk.values())
+    #all_cols.extend(['evac_ability'])
+    all_cols.extend(evac_ability_items.values())
+    all_cols.extend(['evac_decision'])
+    #all_cols.extend(['emer_serv_before', 'emer_serv_during', 'emer_serv_after'])
     
-    print all_cols 
-    for col in all_cols:
-        print col
-        print df[col].unique()     
-        print df[col].value_counts(dropna=False)
+#     print all_cols 
+#     for col in all_cols:
+#         print col
+#         print df[col].unique()     
+#         print df[col].value_counts(dropna=False)
 
-      
     df1 = df[all_cols]
+    #print df1
     df1.to_csv(output_fp, columns=all_cols, index=False)
 
 
@@ -223,6 +237,7 @@ if __name__ == '__main__':
     output_fp = 'data\MTurk_Harvey_info_notice.csv'
     output_fp = 'data\MTurk_Harvey_predict_risk_stay.csv'  
     output_fp = 'data\MTurk_Harvey_predict_risk_evac.csv'
+    output_fp = 'data\MTurk_Harvey_expand_evac_ability.csv'
 #     
 #     output_fp = 'data\MTurk_Harvey_info_notice.csv'
     #output_fp = os.path.join('data', 'MTurk_Harvey.csv')

@@ -108,17 +108,17 @@ if __name__ == '__main__':
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
 
-    #corr_test(df, 'evac_decision')
+    corr_test(df, 'received_evac_notice')
     
-    x = data[:, :-1]
-    y = data[:,-1]
-     
-    baseline_acc = 1.0 - sum(y)/float(len(y))
-    print len(y)
-    print sum(y)
-    print 'accuracy baseline: %f' % baseline_acc
-#     
-
-    cross_validate(x, y)
+#     x = data[:, :-1]
+#     y = data[:,-1]
+#      
+#     baseline_acc = 1.0 - sum(y)/float(len(y))
+#     print len(y)
+#     print sum(y)
+#     print 'accuracy baseline: %f' % baseline_acc
+# #     
+# 
+#     cross_validate(x, y)
     
     

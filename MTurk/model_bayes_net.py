@@ -30,7 +30,7 @@ if __name__ == '__main__':
     data['C'] = data['B']
     searcher = ExhaustiveSearch(data, scoring_method=K2Score(data))
     for score, model in searcher.all_scores():
-        print(score)
-        print(model.edges())
+        print score
+        print model.edges()
         
 
