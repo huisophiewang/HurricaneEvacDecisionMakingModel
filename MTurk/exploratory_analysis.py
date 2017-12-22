@@ -8,9 +8,9 @@ from sklearn.metrics import f1_score
 from pprint import pprint
 
 
-
-# full data
-# F1-score
+#################################
+# Harvey
+# full data F1-score
 # baseline: 0.752
 # demo + house: 0.762
 # risk: 0.754
@@ -27,6 +27,18 @@ from pprint import pprint
 # F1-score
 # baseline: 0.6163
 
+#################################
+# Harvey2
+# full data F1-score
+# baseline: 0.752
+# all: 0.86
+
+#################################
+# Irma
+# F1-score
+# baseline: 0.683
+# all: 0.811
+
 def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     clf = linear_model.LogisticRegression(C=lam, penalty='l1')
     #clf = svm.SVC(C=lam, kernel='linear')
@@ -35,7 +47,7 @@ def sklearn_logistic_reg(x_train, y_train, x_test, y_test, lam):
     predict = clf.predict(x_test)
     acc = np.sum(predict == y_test).astype(int) / float(len(y_test))
     
-    predict = np.zeros(len(y_test))
+    #predict = np.zeros(len(y_test))
     f_score = f1_score(y_test, predict, pos_label=1, average='micro')
     #print y_test
     #print predict
@@ -97,8 +109,8 @@ def hist_plot(df, var):
     plt.show()
     
 if __name__ == '__main__':
-    fp = 'data\MTurk_Harvey_predict_risk_stay.csv'
-    fp = 'data\MTurk_Harvey_predict_risk_evac.csv'
+    fp = 'data\MTurk_Irma.csv'
+    #fp = 'data\MTurk_Irma.csv'
 #     fp = 'data\MTurk_Harvey_basic.csv'
 #     fp = 'data\MTurk_Harvey_risk.csv'
 #     fp = 'data\MTurk_Harvey_notice.csv'
@@ -108,17 +120,16 @@ if __name__ == '__main__':
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
 
-    corr_test(df, 'received_evac_notice')
+    #corr_test(df, 'received_evac_notice')
     
-#     x = data[:, :-1]
-#     y = data[:,-1]
-#      
-#     baseline_acc = 1.0 - sum(y)/float(len(y))
-#     print len(y)
-#     print sum(y)
-#     print 'accuracy baseline: %f' % baseline_acc
-# #     
-# 
-#     cross_validate(x, y)
+    x = data[:, :-1]
+    y = data[:,-1]
+      
+    baseline_acc = 1.0 - sum(y)/float(len(y))
+    print len(y)
+    print sum(y)
+    print 'accuracy baseline: %f' % baseline_acc
+
+    cross_validate(x, y)
     
     

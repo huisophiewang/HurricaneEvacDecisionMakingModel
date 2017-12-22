@@ -39,6 +39,7 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
                     if not feature in feature_count:
                         feature_count[feature] = [0, []]
                     feature_count[feature][0] += 1
+                    # for computing the distribution of coefficients
                     #feature_count[feature][1].append(coef)
                     #print feature, coef
     
@@ -58,15 +59,13 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
         print f, prob
     
 
-# def best_subsut(x, y, features):
-#     for k in range():
-#         for combo in itertools.combinations(x.columns, k):
-#             pass
+
 
 
 if __name__ == '__main__':
-    fp = os.path.join('data', 'MTurk_Harvey.csv')
-    fp = os.path.join('data', 'MTurk_Harvey_predict_risk_evac.csv')
+    fp = os.path.join('data', 'MTurk_Irma.csv')
+    print fp
+    #fp = os.path.join('data', 'MTurk_Harvey_predict_risk_evac.csv')
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
     features = list(df)[:-1]
