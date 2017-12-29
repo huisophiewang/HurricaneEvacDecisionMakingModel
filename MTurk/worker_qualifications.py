@@ -29,7 +29,7 @@ client = boto3.client(
 
 #mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\worker_ids\after_batch_5\User_900338_workers.csv'
 #mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\Irma\worker ids\batch 2\Batch_3040701_batch_results.csv'
-mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\Irma\worker ids\Batch6_results.csv'
+mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\Irma\worker ids\Batch7_results.csv'
 mturk = pd.read_csv(mturk_fp)
 ids_m = mturk['WorkerId']
 

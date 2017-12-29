@@ -178,12 +178,30 @@ def prep(input_fp, output_fp):
     # evac ability
     for item in evac_ability_items.values():
         df[item] = 0
-    for i, d in df.iterrows():
-        items = re.split(regex_comma_outside_parentheses, d['evac_ability_items'])
+    for i, row in df.iterrows():
+        items = re.split(regex_comma_outside_parentheses, row['evac_ability_items'])
         for item in items:
             if item != 'None':
                 df.set_value(i, evac_ability_items[item], 1)
                 
+        # discretize
+        if row['age'] <=30:
+            df.set_value(i, 'age', 1)
+        elif row['age'] > 30 and row['age'] <= 40:
+            df.set_value(i, 'age', 2)
+        elif row['age'] > 40 and row['age'] <= 50:
+            df.set_value(i, 'age', 3) 
+        elif row['age'] > 50 and row['age'] <= 60:
+            df.set_value(i, 'age', 4) 
+        else:
+            df.set_value(i, 'age', 5) 
+        
+        if row['househd_size'] in [1]:
+            df.set_value(i, 'househd_size', 1) 
+        elif row['househd_size'] in [2,3]:
+            df.set_value(i, 'househd_size', 2) 
+        else:
+            df.set_value(i, 'househd_size', 3)         
             
     
     df = pd.concat([df, df_race, df_house_struct, df_house_material, 
