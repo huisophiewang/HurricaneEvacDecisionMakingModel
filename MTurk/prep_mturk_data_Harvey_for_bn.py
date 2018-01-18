@@ -27,7 +27,7 @@ rename_info_other = OrderedDict([('Q8', 'friends_suggest'), ('Q9', 'neighbors_do
 rename_risk = OrderedDict([('Q3_1','risk_of_stay'), ('Q3_2', 'risk_of_evac'), 
                            ('Q3_3', 'wind_risk_to_safety'), ('Q3_4', 'wind_risk_to_property'), 
                            ('Q3_5', 'flood_risk_to_safety'), ('Q3_6', 'flood_risk_to_property')])
-rename_evac_ability = OrderedDict([('Q10', 'evac_ability_items')])
+rename_evac_difficulty = OrderedDict([('Q10', 'evac_difficulty_items')])
 
 rename_emer_service = OrderedDict([('Q36_1','emer_serv_before'), ('Q36_2', 'emer_serv_during'),('Q36_3', 'emer_serv_after')])
 rename_evac_notice = OrderedDict([('Q28', 'evac_notice'), ('Q29', 'evac_notice_type'), ('Q30', 'evac_notice_how'), ('Q31', 'evac_notice_when'), ('Q32', 'stay_notice')])
@@ -36,14 +36,14 @@ rename_evac_decision = OrderedDict([('Q33', 'evac_decision'), ('Q34', 'evac_date
 amount_to_num = {'None at all':1, 'A little':2, 'A moderate amount':3, 'A lot':4, 'A great deal':5}
 yesno_to_num = {'Yes':1, 'No':0}
 
-evac_ability_items = {'Having young children':'ability_children', 
-                      'Having elderly family member(s)':'ability_elders', 
-                      'Having family member(s) with special needs':'ability_special_needs', 
-                      'Having pets':'ability_pets',
-                      'Evacuation expense (travel, lodging, etc.)':'ability_expense', 
-                      'No transportation (cars, flights, public transportation, etc)':'ability_no_transport', 
-                      "No place to go (hotels, public shelters, friends' or family's places, etc.)":'ability_no_place', 
-                      'Job obligations':'ability_job'}
+evac_difficulty_items = {'Having young children':'difficulty_children', 
+                      'Having elderly family member(s)':'difficulty_elders', 
+                      'Having family member(s) with special needs':'difficulty_special_needs', 
+                      'Having pets':'difficulty_pets',
+                      'Evacuation expense (travel, lodging, etc.)':'difficulty_expense', 
+                      'No transportation (cars, flights, public transportation, etc)':'difficulty_no_transport', 
+                      "No place to go (hotels, public shelters, friends' or family's places, etc.)":'difficulty_no_place', 
+                      'Job obligations':'difficulty_job'}
 
 evac_notice_how_items = ['Radio or TV', 'Social media or internet', 'Word of mouth (friends/relative/neighbor)',
                          'Police/authorities came into the neighborhood', 'Text alerts or phone calls from officials', 'Other']
@@ -62,7 +62,7 @@ def prep(input_fp, output_fp):
     rename_all.update(rename_info_social)
     rename_all.update(rename_info_other)
     rename_all.update(rename_risk)
-    rename_all.update(rename_evac_ability)
+    rename_all.update(rename_evac_difficulty)
     rename_all.update(rename_emer_service)
     rename_all.update(rename_evac_notice)
     rename_all.update(rename_evac_decision)
@@ -175,14 +175,33 @@ def prep(input_fp, output_fp):
     df['emer_serv_during'].replace(yesno_to_num, inplace=True)
     df['emer_serv_after'].replace(yesno_to_num, inplace=True)
     
-    # evac ability
-    for item in evac_ability_items.values():
+    # evac difficulty
+    for item in evac_difficulty_items.values():
         df[item] = 0
     for i, row in df.iterrows():
-        items = re.split(regex_comma_outside_parentheses, row['evac_ability_items'])
+        items = re.split(regex_comma_outside_parentheses, row['evac_difficulty_items'])
         for item in items:
             if item != 'None':
-                df.set_value(i, evac_ability_items[item], 1)   
+                df.set_value(i, evac_difficulty_items[item], 1)
+                
+        # discretize
+        if row['age'] <=30:
+            df.set_value(i, 'age', 1)
+        elif row['age'] > 30 and row['age'] <= 40:
+            df.set_value(i, 'age', 2)
+        elif row['age'] > 40 and row['age'] <= 50:
+            df.set_value(i, 'age', 3) 
+        elif row['age'] > 50 and row['age'] <= 60:
+            df.set_value(i, 'age', 4) 
+        else:
+            df.set_value(i, 'age', 5) 
+        
+        if row['househd_size'] in [1]:
+            df.set_value(i, 'househd_size', 1) 
+        elif row['househd_size'] in [2,3]:
+            df.set_value(i, 'househd_size', 2) 
+        else:
+            df.set_value(i, 'househd_size', 3)         
             
     
     df = pd.concat([df, df_race, df_house_struct, df_house_material, 
@@ -199,20 +218,34 @@ def prep(input_fp, output_fp):
     all_cols.extend(['house_single_fam', 'house_condo', 'house_mobile'])
     all_cols.extend(['house_wood', 'house_brick'])
     all_cols.extend(['is_owner', 'has_insurance', 'coast_dist'])
-    # info + social
+    # info
     all_cols.extend(rename_info_tv.values())
     all_cols.extend(rename_info_social.values())
-    all_cols.extend(['friends_suggest_stay', 'friends_suggest_evac', 'neighbors_stay', 'neighbors_evac'])
+    # social
+    #all_cols.extend(['friends_suggest_stay', 'friends_suggest_evac', 'neighbors_stay', 'neighbors_evac'])
     # evac notice
-    all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])  
-    all_cols.extend(['evac_notice_before_landfall', 'evac_notice_after_landfall'])  
+    all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])
+     
+#     df['risk_stay'] = df['risk_stay'].map({1:0, 2:0, 3:0, 4:1, 5:1})
+#     print df['risk_stay']
+#     all_cols.extend(['risk_stay'])
+#     df['risk_evac'] = df['risk_evac'].map({1:0, 2:0, 3:0, 4:1, 5:1})
+#     print df['risk_evac']
+#     all_cols.extend(['risk_evac'])
+ 
     # risk
-    all_cols.extend(rename_risk.values())
-    # ability
-    all_cols.extend(evac_ability_items.values())
+    #all_cols.extend(rename_risk.values())
+    # difficulty
+    #all_cols.extend(evac_difficulty_items.values())
     # decision
     all_cols.extend(['evac_decision'])
 
+#     all_cols.extend(['coast_dist', 'neighbors_stay', 'age', 'friends_suggest_evac', 'neighbors_evac', 'risk_of_stay',
+#                      'no_stay_notice', 'no_evac_notice', 'social_media_storm_damage', 'is_white', 'difficulty_no_place',
+#                      'house_brick', 'difficulty_elders', 'tv_radio_road_traffic', 'wind_risk_to_property', 'wind_risk_to_safety',
+#                      'tv_radio_storm_damage', 'social_media_people_leave', 'friends_suggest_stay', 'tv_radio_casualty', 
+#                      'flood_risk_to_property', 'has_children', 'social_media_road_traffic', 'tv_radio_preparation',
+#                      'is_owner', 'social_media_people_stay', 'has_insurance', 'househd_size', 'evac_decision'])
     
     print all_cols 
     for col in all_cols:
@@ -224,10 +257,11 @@ def prep(input_fp, output_fp):
     #print df1
     df1.to_csv(output_fp, columns=all_cols, index=False)
 
+
     
 if __name__ == '__main__':
     input_fp = os.path.join('data', 'MTurk_Harvey_Qualtrics.csv')
-    output_fp = os.path.join('data', 'MTurk_Harvey_v1.csv')
+    output_fp = os.path.join('data', 'MTurk_Harvey_bn_v3.csv')
 
     prep(input_fp, output_fp)
 

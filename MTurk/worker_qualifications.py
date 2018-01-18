@@ -18,8 +18,8 @@ client = boto3.client(
     'mturk',
     endpoint_url=endpoint_url,
     region_name=region_name,
-    aws_access_key_id='AKIAJDB7ZESVIVEWPADA',
-    aws_secret_access_key='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',
+    aws_access_key_id='AKIAIJCX5YG2R2LBFUWA',
+    aws_secret_access_key='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',
 )
 
 #get all hits
@@ -29,7 +29,7 @@ client = boto3.client(
 
 #mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\worker_ids\after_batch_5\User_900338_workers.csv'
 #mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\Irma\worker ids\batch 2\Batch_3040701_batch_results.csv'
-mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\Irma\worker ids\Batch10_results.csv'
+mturk_fp = r'C:\Users\Sophie\Google Drive\Research\MTurk Data Collection\Data\Irma\worker ids\Batch11_results.csv'
 mturk = pd.read_csv(mturk_fp)
 ids_m = mturk['WorkerId']
 

@@ -39,7 +39,7 @@ def repeated_nested_kfold_cv(x, y, repeats):
             # inner cv, tune hyper parameters
             inner_cv = model_selection.StratifiedKFold(n_splits=10, shuffle=True)
             inner_cv.split(x_train, y_train)
-            search_param = model_selection.GridSearchCV(estimator = neural_network.MLPClassifier(solver='lbfgs', random_state=0), 
+            search_param = model_selection.GridSearchCV(estimator = neural_network.MLPClassifier(random_state=0), 
                                                         param_grid = {'hidden_layer_sizes':hid}, 
                                                         scoring='f1_micro', 
                                                         cv=10)
@@ -59,7 +59,7 @@ def test_param(x, y, features):
     for i in range(1, 20):
         hid.extend([(n,i) for n in range(1, 62, 2)])
     pprint(hid)
-    search_param = model_selection.GridSearchCV(estimator = neural_network.MLPClassifier(solver='lbfgs', random_state=0, activation='logistic'), 
+    search_param = model_selection.GridSearchCV(estimator = neural_network.MLPClassifier(solver='adam', random_state=0, activation='relu', learning_rate_init=0.1), 
                                                 param_grid = {'hidden_layer_sizes':hid}, 
                                                 scoring='f1_micro', 
                                                 cv=10)
@@ -71,8 +71,12 @@ def test_param(x, y, features):
     
 def view_coef(x, y, features):
     scaler = preprocessing.StandardScaler().fit(x)
+    
     x = scaler.transform(x) 
-    clf = neural_network.MLPClassifier(solver='lbfgs', hidden_layer_sizes=(5,1), random_state=1)
+    print x.mean(axis=0)
+    print x.std(axis=0)
+    pprint(x)
+    clf = neural_network.MLPClassifier(solver='lbfgs', hidden_layer_sizes=(17,2), random_state=1)
     clf.fit(x, y)   
     y_predict = clf.predict(x)
     fscore = metrics.f1_score(y, y_predict, average='micro')
@@ -80,13 +84,18 @@ def view_coef(x, y, features):
     print clf.n_layers_
     print clf.n_outputs_
     print clf.out_activation_
-    for j, coef in enumerate(clf.coefs_):
-        print '-------------------------'
-        for i, row in enumerate(coef):
-            if j == 0:
-                print features[i]
-            print row
-            print 
+    for i, coef in enumerate(clf.coefs_):
+        print '------------------------------layer %d---------------------------------' % i
+        for j, row in enumerate(coef.T):
+            print '---------------------node %d-----------------------' % j
+            pprint(row)
+            if i == 0:
+                for k, item in enumerate(row):
+                    if np.absolute(item) > 0.4:
+                        print features[k]
+                        print item
+                        print 
+                
     
 
 
@@ -98,8 +107,10 @@ if __name__ == '__main__':
     x = data[:,:-1]
     y = data[:,-1]
     
-    repeats = 1
+    #repeats = 1
     #repeated_nested_kfold_cv(x, y, repeats)
     
-    test_param(x, y, features)
+    #test_param(x, y, features)
+    #view_coef(x, y, features)
+    pprint(features)
     

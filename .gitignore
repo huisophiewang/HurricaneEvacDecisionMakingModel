@@ -2,3 +2,4 @@
 .pydevproject
 *.pyc
 use_psychsim/psychsim/
+MTurk/worker_qualification.py
