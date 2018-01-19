@@ -18,8 +18,8 @@ client = boto3.client(
     'mturk',
     endpoint_url=endpoint_url,
     region_name=region_name,
-    aws_access_key_id='AKIAIJCX5YG2R2LBFUWA',
-    aws_secret_access_key='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',
+    aws_access_key_id='',
+    aws_secret_access_key='',
 )
 
 #get all hits
