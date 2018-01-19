@@ -206,7 +206,6 @@ def prep(input_fp, output_fp):
     all_cols.extend(['friends_suggest_stay', 'friends_suggest_evac', 'neighbors_stay', 'neighbors_evac'])
     # evac notice
     all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])  
-    #all_cols.extend(['evac_notice_before_landfall', 'evac_notice_after_landfall'])  
     # risk
     all_cols.extend(rename_risk.values())
     # difficulty

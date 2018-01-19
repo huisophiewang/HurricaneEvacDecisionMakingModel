@@ -39,7 +39,7 @@ rename_risk = OrderedDict([('Q2_1','risk_of_stay'), ('Q2_2', 'risk_of_evac'),
                            ('Q2_3', 'wind_risk_to_safety'), ('Q2_4', 'wind_risk_to_property'), 
                            ('Q2_5', 'flood_risk_to_safety'), ('Q2_6', 'flood_risk_to_property')])
 
-rename_evac_ability = OrderedDict([('Q9', 'evac_ability_items')])
+rename_evac_difficulty = OrderedDict([('Q9', 'evac_difficulty_items')])
 
 rename_evac_notice = OrderedDict([('Q34', 'evac_notice'), ('Q35', 'evac_notice_type'), 
                                   ('Q36', 'evac_notice_how'), ('Q37', 'evac_notice_when'), ('Q38', 'stay_notice')])
@@ -52,14 +52,14 @@ rename_emer_service = OrderedDict([('Q42_1','emer_serv_before'), ('Q42_2', 'emer
 amount_to_num = {'None at all':1, 'A little':2, 'A moderate amount':3, 'A lot':4, 'A great deal':5}
 yesno_to_num = {'Yes':1, 'No':0}
 
-evac_ability_items = {'Having young children':'evac_ability_children', 
-                      'Having elderly family member(s)':'evac_ability_elders', 
-                      'Having family member(s) with special needs':'evac_ability_special_needs', 
-                      'Having pets':'evac_ability_pets',
-                      'Evacuation expense (travel, lodging, etc.)':'evac_ability_expense', 
-                      'No transportation (cars, flights, public transportation, etc)':'evac_ability_no_transport', 
-                      "No place to go (hotels, public shelters, friends' or family's places, etc.)":'evac_ability_no_place', 
-                      'Job obligations':'evac_ability_job_obligation'}
+evac_difficulty_items = {'Having young children':'evac_difficulty_children', 
+                      'Having elderly family member(s)':'evac_difficulty_elders', 
+                      'Having family member(s) with special needs':'evac_difficulty_special_needs', 
+                      'Having pets':'evac_difficulty_pets',
+                      'Evacuation expense (travel, lodging, etc.)':'evac_difficulty_expense', 
+                      'No transportation (cars, flights, public transportation, etc)':'evac_difficulty_no_transport', 
+                      "No place to go (hotels, public shelters, friends' or family's places, etc.)":'evac_difficulty_no_place', 
+                      'Job obligations':'evac_difficulty_job_obligation'}
 
 evac_notice_how_items = ['Radio or TV', 'Social media or internet', 'Word of mouth (friends/relative/neighbor)',
                          'Police/authorities came into the neighborhood', 'Text alerts or phone calls from officials', 'Other']
@@ -80,7 +80,7 @@ def prep(input_fp, output_fp):
     rename_all.update(rename_harvey)
     rename_all.update(rename_prev_exp)
     rename_all.update(rename_risk)
-    rename_all.update(rename_evac_ability)
+    rename_all.update(rename_evac_difficulty)
     rename_all.update(rename_emer_service)
     rename_all.update(rename_evac_notice)
     rename_all.update(rename_evac_decision)
@@ -93,7 +93,7 @@ def prep(input_fp, output_fp):
     df['is_male'].replace({"Female":0, "Male":1}, inplace=True)
     df['race'].replace({"Caucasian":1, "African American":2, "Asian":3, "Hispanic":4, "American Indian":5, "Other":0}, inplace=True)
     df_race = pd.get_dummies(df['race'], drop_first=True)
-    df_race.rename(columns={1:'is_white', 2:'is_black', 3:'is_asian', 4:'is_hispanic', 5:'is_native'}, inplace=True)
+    df_race.rename(columns={1:'is_white', 2:'is_black', 3:'is_asian', 4:'is_hispanic'}, inplace=True)
     df['edu'].replace({'Some high school':0, 'High school graduate':1, 'Some college':2, 'College graduate':3, 'Graduate school':4}, inplace=True)
     df['income'].replace({'Less than $15,000':0, '$15,000 to $25,000':1, '$25,000 to $40,000':2, '$40,000 to $80,000':3, 'Over $80,000':4}, inplace=True)
     df['has_children'].replace(yesno_to_num, inplace=True)
@@ -210,14 +210,15 @@ def prep(input_fp, output_fp):
     df['emer_serv_after'].replace(yesno_to_num, inplace=True)
     
     
-    # ability
-    for item in evac_ability_items.values():
+    
+    for item in evac_difficulty_items.values():
         df[item] = 0
     for i, row in df.iterrows():
-        items = re.split(regex_comma_outside_parentheses, row['evac_ability_items'])
+        # evac difficulty
+        items = re.split(regex_comma_outside_parentheses, row['evac_difficulty_items'])
         for item in items:
             if item != 'None':
-                df.set_value(i, evac_ability_items[item], 1)
+                df.set_value(i, evac_difficulty_items[item], 1)
                 
         if row['harvey_influence_direction'] == 'Increased my desire to leave':
             df.set_value(i, 'harvey_influence', row['harvey_influence_amount'])
@@ -225,23 +226,23 @@ def prep(input_fp, output_fp):
             df.set_value(i, 'harvey_influence', row['harvey_influence_amount']*(-1))
         
         # discretize
-        if row['age'] <=30:
-            df.set_value(i, 'age', 1)
-        elif row['age'] > 30 and row['age'] <= 40:
-            df.set_value(i, 'age', 2)
-        elif row['age'] > 40 and row['age'] <= 50:
-            df.set_value(i, 'age', 3) 
-        elif row['age'] > 50 and row['age'] <= 60:
-            df.set_value(i, 'age', 4) 
-        else:
-            df.set_value(i, 'age', 5) 
-        
-        if row['househd_size'] in [1]:
-            df.set_value(i, 'househd_size', 1) 
-        elif row['househd_size'] in [2,3]:
-            df.set_value(i, 'househd_size', 2) 
-        else:
-            df.set_value(i, 'househd_size', 3) 
+#         if row['age'] <=30:
+#             df.set_value(i, 'age', 1)
+#         elif row['age'] > 30 and row['age'] <= 40:
+#             df.set_value(i, 'age', 2)
+#         elif row['age'] > 40 and row['age'] <= 50:
+#             df.set_value(i, 'age', 3) 
+#         elif row['age'] > 50 and row['age'] <= 60:
+#             df.set_value(i, 'age', 4) 
+#         else:
+#             df.set_value(i, 'age', 5) 
+#         
+#         if row['househd_size'] in [1]:
+#             df.set_value(i, 'househd_size', 1) 
+#         elif row['househd_size'] in [2,3]:
+#             df.set_value(i, 'househd_size', 2) 
+#         else:
+#             df.set_value(i, 'househd_size', 3) 
     
     df = pd.concat([df, df_race, df_house_struct, df_house_material, 
                     df_evac_notice, df_evac_notice_type, df_stay_notice, 
@@ -252,7 +253,7 @@ def prep(input_fp, output_fp):
     all_cols = []
     # demo
     all_cols.extend(['age', 'is_male','edu','income','househd_size'])
-    all_cols.extend(['is_white', 'is_black', 'is_asian', 'is_hispanic', 'is_native'])
+    all_cols.extend(['is_white', 'is_black', 'is_asian', 'is_hispanic'])
     all_cols.extend(['has_children', 'has_elders', 'has_special_needs', 'has_pets'])
     # house
     all_cols.extend(['house_single_fam', 'house_condo', 'house_mobile'])
@@ -263,14 +264,13 @@ def prep(input_fp, output_fp):
     all_cols.extend(rename_info_social.values())
     all_cols.extend(['friends_suggest_stay', 'friends_suggest_evac', 'neighbors_stay', 'neighbors_evac'])
     # harvey + prev exp
-    all_cols.extend(['harvey_influence', 'has_prev_exp', 'prev_decision_evac', 'prev_decision_stay', 'prev_decision_regret', 'prev_decision_no_regret'])
+    #all_cols.extend(['harvey_influence', 'has_prev_exp', 'prev_decision_evac', 'prev_decision_stay', 'prev_decision_regret', 'prev_decision_no_regret'])
     # evac notice
     all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])  
-    all_cols.extend(['evac_notice_before_cat5', 'evac_notice_after_cat5'])  
     # risk
     all_cols.extend(rename_risk.values())
-    # ability
-    all_cols.extend(evac_ability_items.values())
+    # difficulty
+    all_cols.extend(evac_difficulty_items.values())
     # decision
     all_cols.extend(['evac_decision'])
 
@@ -290,7 +290,7 @@ def prep(input_fp, output_fp):
 if __name__ == '__main__':
     input_fp = os.path.join('data', 'MTurk_Irma_Qualtrics.csv')
 
-    output_fp = os.path.join('data', 'MTurk_Irma.csv')
+    output_fp = os.path.join('data', 'MTurk_Irma_var_cluster.csv')
     prep(input_fp, output_fp)
 
     

@@ -50,13 +50,7 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
             fscore = metrics.f1_score(y_test, y_predict, average='micro')
             scores.append(fscore)
             print "f1-score: %f" % fscore
-#             precision = metrics.precision_score(y_test, y_predict)
-#             precision_scores.append(precision)
-#             print "precision: %f" % precision
-#             recall = metrics.recall_score(y_test, y_predict)
-#             recall_scores.append(recall)
-#             print "recall: %f" % recall
-            
+
         
     print "F1-Score : Mean - %.7g | Std - %.7g" % (np.mean(scores),np.std(scores))
 #     print "Precision : Mean - %.7g | Std - %.7g" % (np.mean(precision_scores),np.std(precision_scores))
@@ -109,7 +103,7 @@ def test_metrics(x, y):
 
 
 if __name__ == '__main__':
-    fp = os.path.join('data', 'MTurk_Harvey_v2.csv')
+    fp = os.path.join('data', 'MTurk_Irma.csv')
     print fp
     #fp = os.path.join('data', 'MTurk_Harvey_predict_risk_evac.csv')
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
