@@ -251,6 +251,7 @@ def prep(input_fp, output_fp):
 
 
     all_cols = []
+    all_cols.extend(['preIrma_zipcode', 'current_zipcode', 'county'])
     # demo
     all_cols.extend(['age', 'is_male','edu','income','househd_size'])
     all_cols.extend(['is_white', 'is_black', 'is_asian', 'is_hispanic'])
@@ -264,7 +265,7 @@ def prep(input_fp, output_fp):
     all_cols.extend(rename_info_social.values())
     all_cols.extend(['friends_suggest_stay', 'friends_suggest_evac', 'neighbors_stay', 'neighbors_evac'])
     # harvey + prev exp
-    #all_cols.extend(['harvey_influence', 'has_prev_exp', 'prev_decision_evac', 'prev_decision_stay', 'prev_decision_regret', 'prev_decision_no_regret'])
+    all_cols.extend(['harvey_influence', 'has_prev_exp', 'prev_decision_evac', 'prev_decision_stay', 'prev_decision_regret', 'prev_decision_no_regret'])
     # evac notice
     all_cols.extend(['received_evac_notice', 'no_evac_notice', 'received_mandatory', 'received_voluntary', 'received_stay_notice', 'no_stay_notice'])  
     # risk
@@ -290,7 +291,8 @@ def prep(input_fp, output_fp):
 if __name__ == '__main__':
     input_fp = os.path.join('data', 'MTurk_Irma_Qualtrics.csv')
 
-    output_fp = os.path.join('data', 'MTurk_Irma_var_cluster.csv')
+    #output_fp = os.path.join('data', 'MTurk_Irma_var_cluster_v2.csv')
+    output_fp = os.path.join('data', 'MTurk_Irma_var_cluster_with_loc.csv')
     prep(input_fp, output_fp)
 
     

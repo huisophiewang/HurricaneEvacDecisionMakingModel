@@ -13,8 +13,8 @@ import itertools
 def repeated_nested_kfold_cv(x, y, features, repeats):
     feature_count = {}
     scores = []
-    precision_scores = []
-    recall_scores = []
+    accs = []
+
     for t in range(repeats):
         print '=========================================================='
         print 'Trial %d' % t
@@ -48,8 +48,11 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
     
             y_predict = clf.predict(x_test)
             fscore = metrics.f1_score(y_test, y_predict, average='micro')
+            acc = metrics.accuracy_score(y_test, y_predict)
             scores.append(fscore)
+            accs.append(acc)
             print "f1-score: %f" % fscore
+            print "accuracy: %f" % acc
 
         
     print "F1-Score : Mean - %.7g | Std - %.7g" % (np.mean(scores),np.std(scores))
@@ -98,12 +101,15 @@ def test_metrics(x, y):
     print
     print 'harmonic mean'
     print hmean([p,r]), hmean([p_mi, r_mi]), hmean([p_ma, r_ma])
+    
+    print 
+    print metrics.accuracy_score(y, y_predict)
             
         
 
 
 if __name__ == '__main__':
-    fp = os.path.join('data', 'MTurk_Irma.csv')
+    fp = os.path.join('data', 'MTurk_Harvey.csv')
     print fp
     #fp = os.path.join('data', 'MTurk_Harvey_predict_risk_evac.csv')
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
@@ -111,7 +117,7 @@ if __name__ == '__main__':
     features = list(df)[:-1]
     x = data[:,:-1]
     y = data[:,-1]
-    repeats = 10
+    repeats = 1
     repeated_nested_kfold_cv(x, y, features, repeats)
     #test_metrics(x, y)
     
