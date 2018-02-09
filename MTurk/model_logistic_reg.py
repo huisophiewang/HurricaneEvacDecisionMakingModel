@@ -12,6 +12,7 @@ import itertools
 
 def repeated_nested_kfold_cv(x, y, features, repeats):
     feature_count = {}
+    feature_coefficient = {}
     scores = []
     accs = []
 
@@ -40,32 +41,39 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
                 if coef != 0.0:
                     feature = features[i]
                     if not feature in feature_count:
-                        feature_count[feature] = [0, []]
-                    feature_count[feature][0] += 1
-                    # for computing the distribution of coefficients
-                    #feature_count[feature][1].append(coef)
-                    #print feature, coef
+                        feature_count[feature] = 0
+                    feature_count[feature] += 1
+                    
+#                   # for computing the distribution of coefficients
+                    if not feature in feature_coefficient:
+                        feature_coefficient[feature] = []
+                    feature_coefficient[feature].append(coef)
     
             y_predict = clf.predict(x_test)
             fscore = metrics.f1_score(y_test, y_predict, average='micro')
             acc = metrics.accuracy_score(y_test, y_predict)
             scores.append(fscore)
             accs.append(acc)
-            print "f1-score: %f" % fscore
-            print "accuracy: %f" % acc
+            #print "f1-score: %f" % fscore
+            #print "accuracy: %f" % acc
 
-        
+    print '======================================================================'    
     print "F1-Score : Mean - %.7g | Std - %.7g" % (np.mean(scores),np.std(scores))
 #     print "Precision : Mean - %.7g | Std - %.7g" % (np.mean(precision_scores),np.std(precision_scores))
 #     print "Recall : Mean - %.7g | Std - %.7g" % (np.mean(recall_scores),np.std(recall_scores))
 
     for feature in feature_count:
-        feature_count[feature][0] /= float(10*repeats)
-    sorted_features = sorted(feature_count.items(), key=lambda x: x[1][0], reverse=True)
+        feature_count[feature] /= float(10*repeats)
+    sorted_features = sorted(feature_count.items(), key=lambda x: x[1], reverse=True)
     pprint(sorted_features)
-    for f, vals in sorted_features:
-        prob = vals[0]
-        print f, prob
+#     for f, prob in sorted_features:
+#         print '----------------'
+#         print f
+#         print "probability: %f" % prob
+#         print "coef mean: %f" % np.mean(feature_coefficient[f])
+#         print "coef std: %f" % np.std(feature_coefficient[f])
+        
+    
     
 def test_metrics(x, y):
     clf = linear_model.LogisticRegression()
@@ -110,6 +118,7 @@ def test_metrics(x, y):
 
 if __name__ == '__main__':
     fp = os.path.join('data', 'MTurk_Harvey.csv')
+    #fp = 'C:\Users\Sophie\Statistics\hurricane\Harvey\harvey_6clusters.csv'
     print fp
     #fp = os.path.join('data', 'MTurk_Harvey_predict_risk_evac.csv')
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
@@ -117,7 +126,7 @@ if __name__ == '__main__':
     features = list(df)[:-1]
     x = data[:,:-1]
     y = data[:,-1]
-    repeats = 1
+    repeats = 100
     repeated_nested_kfold_cv(x, y, features, repeats)
     #test_metrics(x, y)
     
