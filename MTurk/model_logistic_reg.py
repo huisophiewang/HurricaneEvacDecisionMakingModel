@@ -13,6 +13,7 @@ import itertools
 def repeated_nested_kfold_cv(x, y, features, repeats):
     feature_count = {}
     feature_coefficient = {}
+    intercept = []
     scores = []
     accs = []
 
@@ -23,7 +24,6 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
         for fold, (train_idx, test_idx) in enumerate(outer_cv.split(x, y)):
             print '-----------------------------------'
             print 'Fold %d' % fold
-            #print test_idx
             x_train, x_test = x[train_idx], x[test_idx]
             y_train, y_test = y[train_idx], y[test_idx]
             # inner cv, tune hyper parameters
@@ -48,7 +48,8 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
                     if not feature in feature_coefficient:
                         feature_coefficient[feature] = []
                     feature_coefficient[feature].append(coef)
-    
+            print clf.intercept_
+            intercept.append(clf.intercept_)
             y_predict = clf.predict(x_test)
             fscore = metrics.f1_score(y_test, y_predict, average='micro')
             acc = metrics.accuracy_score(y_test, y_predict)
@@ -65,13 +66,14 @@ def repeated_nested_kfold_cv(x, y, features, repeats):
     for feature in feature_count:
         feature_count[feature] /= float(10*repeats)
     sorted_features = sorted(feature_count.items(), key=lambda x: x[1], reverse=True)
-    pprint(sorted_features)
-#     for f, prob in sorted_features:
-#         print '----------------'
-#         print f
-#         print "probability: %f" % prob
-#         print "coef mean: %f" % np.mean(feature_coefficient[f])
-#         print "coef std: %f" % np.std(feature_coefficient[f])
+    #pprint(sorted_features)
+    for f, prob in sorted_features:
+        print '----------------'
+        print f
+        print "probability: %f" % prob
+        print "coef mean: %f" % np.mean(feature_coefficient[f])
+        print "coef std: %f" % np.std(feature_coefficient[f])
+
         
     
     
@@ -117,10 +119,9 @@ def test_metrics(x, y):
 
 
 if __name__ == '__main__':
-    fp = os.path.join('data', 'MTurk_Harvey.csv')
-    #fp = 'C:\Users\Sophie\Statistics\hurricane\Harvey\harvey_6clusters.csv'
+    #fp = os.path.join('data', 'MTurk_Harvey.csv')
+    fp = os.path.join('data', 'MTurk_Irma.csv')
     print fp
-    #fp = os.path.join('data', 'MTurk_Harvey_predict_risk_evac.csv')
     data = np.genfromtxt(fp, delimiter=",", dtype=float, skip_header=1)
     df = pd.read_csv(fp)
     features = list(df)[:-1]

@@ -213,15 +213,15 @@ def plot_by_county():
     #print df1
     entities = sorted(df[var].unique())
     print len(entities)
-#     vals = np.zeros((len(COUNTIES), len(entities)))
-#     for i, county in enumerate(COUNTIES):
-#         for j, entity in enumerate(entities):
-#             if entity in df1[county]:
-#                 vals[i][j] = df1[county][entity]   
-#                 
-#     df2 = pd.DataFrame(vals, COUNTIES, entities)
-#     df2.plot(kind='bar', rot=-90, title=var, figsize=(22,10))
-#     plt.show()      
+    vals = np.zeros((len(COUNTIES), len(entities)))
+    for i, county in enumerate(COUNTIES):
+        for j, entity in enumerate(entities):
+            if entity in df1[county]:
+                vals[i][j] = df1[county][entity]   
+                 
+    df2 = pd.DataFrame(vals, COUNTIES, entities)
+    df2.plot(kind='bar', rot=-90, title=var, figsize=(22,10))
+    plt.show()      
     
 if __name__ == '__main__':
     #prep_related_vars()
