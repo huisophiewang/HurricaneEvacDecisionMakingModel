@@ -3,3 +3,4 @@
 *.pyc
 use_psychsim/psychsim/
 MTurk/worker_qualifications.py
+*.DS_Store
